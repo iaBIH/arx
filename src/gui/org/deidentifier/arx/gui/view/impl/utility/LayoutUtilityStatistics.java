@@ -75,13 +75,25 @@ public class LayoutUtilityStatistics implements ILayout, IView {
     private final ComponentTitledFolder                 folder;
 
     /** View */
-    private final ToolItem                              enable;
+    private final ToolItem                              chkbtnVisualisation;
+    
+    /** View */
+    private  Boolean                               hideSuppressedRecords;
 
     /** View */
-    private final Image                                 enabled;
+    private  ToolItem                              chkbtnSuppressedRecords;
 
     /** View */
-    private final Image                                 disabled;
+    private final Image                                 icnVisEnabled;
+
+    /** View */
+    private final Image                                 icnVisDisabled;
+
+    /** View */
+    private final Image                                 icnSREnabled;
+
+    /** View */
+    private final Image                                 icnSRDisabled;
 
     /** View */
     private final Map<Composite, String>                helpids                     = new HashMap<Composite, String>();
@@ -108,28 +120,56 @@ public class LayoutUtilityStatistics implements ILayout, IView {
                                    final ModelPart target,
                                    final ModelPart reset) {
 
-        this.enabled = controller.getResources().getManagedImage("tick.png"); //$NON-NLS-1$
-        this.disabled = controller.getResources().getManagedImage("cross.png"); //$NON-NLS-1$
+        // initialize controller components 
+        
+        // initialize check button icons
+        this.icnVisEnabled   = controller.getResources().getManagedImage("tick.png"); //$NON-NLS-1$
+        this.icnVisDisabled  = controller.getResources().getManagedImage("cross.png"); //$NON-NLS-1$
+
+        this.icnSREnabled    = controller.getResources().getManagedImage("tickSR.png"); //$NON-NLS-1$
+        this.icnSRDisabled   = controller.getResources().getManagedImage("crossSR.png"); //$NON-NLS-1$
+
         this.controller = controller;
         
         controller.addListener(ModelPart.MODEL, this);
         controller.addListener(ModelPart.SELECTED_UTILITY_VISUALIZATION, this);
 
-        // Create enable/disable button
-        final String label = Resources.getMessage("StatisticsView.3"); //$NON-NLS-1$
-        ComponentTitledFolderButtonBar bar = new ComponentTitledFolderButtonBar("id-50", helpids); //$NON-NLS-1$
-        bar.add(label, disabled, true, new Runnable() { @Override public void run() {
-            toggleEnabled();
-            toggleImage(); 
-        }});
+
+        // Create  toolbar
+        ComponentTitledFolderButtonBar toolbarVis  = new ComponentTitledFolderButtonBar("id-50", helpids); //$NON-NLS-1$
+
+        // Create suppressed records  and visualisation enable/disable check buttons
+        final String chkbtnSuppressedRecordsLabel = Resources.getMessage("StatisticsView.13"); //$NON-NLS-1$
+        final String chkbtnVisualisationLabel     = Resources.getMessage("StatisticsView.3"); //$NON-NLS-1$
+
+        // add check buttons to the to toolbars
+        if (target == ModelPart.INPUT) {            
+            toolbarVis.add(chkbtnVisualisationLabel, icnVisDisabled, true, new Runnable() { @Override public void run() {
+                toggleChkbtnVisualization();
+                toggleChkbtnVisIcon(chkbtnVisualisation); 
+            }});
+
+        }else {
+            toolbarVis.add(chkbtnSuppressedRecordsLabel, icnSREnabled, true, new Runnable() { @Override public void run() {
+                toggleChkbtnSuppressedRecords();
+                toggleChkbtnSRIcon(chkbtnSuppressedRecords); 
+            }});
+            
+            toolbarVis.add(chkbtnVisualisationLabel, icnVisDisabled, true, new Runnable() { @Override public void run() {
+                toggleChkbtnVisualization();
+                toggleChkbtnVisIcon(chkbtnVisualisation); 
+            }});                        
+        }   
+        
+        hideSuppressedRecords = false;
         
         // Create the tab folder
-        folder = new ComponentTitledFolder(parent, controller, bar, null, false, true);
+        folder = new ComponentTitledFolder(parent, controller, toolbarVis, null, false, true);
         
         // Register tabs
         this.registerView(new ViewStatisticsSummaryTable(folder.createItem(TAB_SUMMARY, null, true), controller, target, reset), "help.utility.summary"); //$NON-NLS-1$
-        this.registerView(new ViewStatisticsDistributionHistogram(folder.createItem(TAB_DISTRIBUTION, null, true), controller, target, reset), "help.utility.distribution"); //$NON-NLS-1$
-        this.registerView(new ViewStatisticsDistributionTable(folder.createItem(TAB_DISTRIBUTION_TABLE, null, true), controller, target, reset), "help.utility.distribution"); //$NON-NLS-1$
+        this.registerView(new ViewStatisticsDistributionHistogram(folder.createItem(TAB_DISTRIBUTION, null, true), controller, target, reset,hideSuppressedRecords), "help.utility.distribution"); //$NON-NLS-1$
+        this.registerView(new ViewStatisticsDistributionTable(folder.createItem(TAB_DISTRIBUTION_TABLE, null, true), controller, target, reset,hideSuppressedRecords), "help.utility.distribution"); //$NON-NLS-1$
         this.registerView(new ViewStatisticsContingencyHeatmap(folder.createItem(TAB_CONTINGENCY, null, true), controller, target, reset), "help.utility.contingency"); //$NON-NLS-1$
         this.registerView(new ViewStatisticsContingencyTable(folder.createItem(TAB_CONTINGENCY_TABLE, null, true), controller, target, reset), "help.utility.contingency"); //$NON-NLS-1$
         this.registerView(new ViewStatisticsEquivalenceClassTable(folder.createItem(TAB_CLASSES_TABLE, null, true), controller, target, reset), "help.utility.classes"); //$NON-NLS-1$
@@ -143,9 +183,13 @@ public class LayoutUtilityStatistics implements ILayout, IView {
         
         // Init folder
         this.folder.setSelection(0);
-        this.enable = folder.getButtonItem(label);
-        this.enable.setEnabled(false);
-        
+        this.chkbtnVisualisation = folder.getButtonItem(chkbtnVisualisationLabel);
+        this.chkbtnVisualisation.setEnabled(false);
+
+        if (! (target == ModelPart.INPUT) ) {            
+            this.chkbtnSuppressedRecords = folder.getButtonItem(chkbtnSuppressedRecordsLabel);
+            this.chkbtnSuppressedRecords.setEnabled(true);
+        };        
         // Set initial visibility
         folder.setVisibleItems(Arrays.asList(new String[] { TAB_SUMMARY,
                                                             TAB_DISTRIBUTION,
@@ -188,9 +232,9 @@ public class LayoutUtilityStatistics implements ILayout, IView {
     @Override
     public void reset() {
         model = null;
-        enable.setSelection(true);
-        enable.setImage(enabled);
-        enable.setEnabled(false);
+        chkbtnVisualisation.setSelection(true);
+        chkbtnVisualisation.setImage(icnVisEnabled);
+        chkbtnVisualisation.setEnabled(false);
     }
     
     /**
@@ -227,12 +271,12 @@ public class LayoutUtilityStatistics implements ILayout, IView {
 
         if (event.part == ModelPart.MODEL) {
             this.model = (Model)event.data;
-            this.enable.setEnabled(true);
-            this.enable.setSelection(model.isVisualizationEnabled());
-            this.toggleImage();
+            this.chkbtnVisualisation.setEnabled(true);
+            this.chkbtnVisualisation.setSelection(model.isVisualizationEnabled());
+            this.toggleChkbtnVisIcon(chkbtnVisualisation);
         } else if (event.part == ModelPart.SELECTED_UTILITY_VISUALIZATION) {
-            this.enable.setSelection(model.isVisualizationEnabled());
-            this.toggleImage();
+            this.chkbtnVisualisation.setSelection(model.isVisualizationEnabled());
+            this.toggleChkbtnVisIcon(chkbtnVisualisation);
         }
     }
 
@@ -257,21 +301,51 @@ public class LayoutUtilityStatistics implements ILayout, IView {
     }
 
     /**
-     * Toggle visualization enabled.
+     * Toggle visualization .
      */
-    private void toggleEnabled() {
-        this.model.setVisualizationEnabled(this.enable.getSelection());
-        this.controller.update(new ModelEvent(this, ModelPart.SELECTED_UTILITY_VISUALIZATION, enable.getSelection()));
+    private void toggleChkbtnVisualization() {
+        this.model.setVisualizationEnabled(this.chkbtnVisualisation.getSelection());
+        this.controller.update(new ModelEvent(this, ModelPart.SELECTED_UTILITY_VISUALIZATION, chkbtnVisualisation.getSelection()));
     }
+
+    /**
+     * Toggle supressed records 
+     */
+    private void toggleChkbtnSuppressedRecords() {
+
+        System.out.println("its working!!!");
+        System.out.println(""+this.chkbtnSuppressedRecords.getSelection());
+        this.hideSuppressedRecords = this.chkbtnSuppressedRecords.getSelection();
+        //TODO:  how we update the registered tab ??? 
+        //TODO: get the output data handles
+        //      remove * column 
+//        System.out.println("target"+ this.model.getResult().getOutput().getNumColumns());
+//        System.out.println("target"+ this.model.getResult().getOutput().getNumRows());
+        //this.model.getResult().getOutput().iterator();
+        // TODO how to register and unregister items check the action of visible items         
+        //this.registerView(new ViewStatisticsDistributionHistogram(folder.createItem(TAB_DISTRIBUTION, null, false), controller, target, reset,this.chkbtnSuppressedRecords.getSelection()), "help.utility.distribution"); //$NON-NLS-1$
+    }
+    
 
     /**
      * Toggle image.
      */
-    private void toggleImage(){
-        if (enable.getSelection()) {
-            enable.setImage(enabled);
-        } else {
-            enable.setImage(disabled);
+    private void toggleChkbtnVisIcon(ToolItem chkbtn){
+            if (chkbtn.getSelection()) {
+                chkbtn.setImage(icnVisEnabled);
+            } else {
+                chkbtn.setImage(icnVisDisabled);
+            }
         }
-    }
+    /**
+     * Toggle image.
+     */
+    private void toggleChkbtnSRIcon(ToolItem chkbtn){
+            if (chkbtn.getSelection()) {
+                chkbtn.setImage(icnSREnabled);
+            } else {
+                chkbtn.setImage(icnSRDisabled);
+            }
+        }
+
 }

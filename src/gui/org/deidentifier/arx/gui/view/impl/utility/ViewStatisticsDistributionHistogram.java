@@ -17,6 +17,9 @@
 package org.deidentifier.arx.gui.view.impl.utility;
 
 import org.deidentifier.arx.AttributeType.Hierarchy;
+
+import java.util.ArrayList;
+
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.aggregates.StatisticsBuilderInterruptible;
 import org.deidentifier.arx.aggregates.StatisticsFrequencyDistribution;
@@ -71,6 +74,10 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
     
     /** Internal stuff. */
     private AnalysisManager  manager;
+    
+    /** Internal stuff. */
+    public Boolean hideSuppressedRecords;
+
 
     /**
      * Creates a new instance.
@@ -83,10 +90,11 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
     public ViewStatisticsDistributionHistogram(final Composite parent,
                                                final Controller controller,
                                                final ModelPart target,
-                                               final ModelPart reset) {
-        
+                                               final ModelPart reset,
+                                               final Boolean hideSuppressedRecords) {        
         super(parent, controller, target, reset, true);
         this.manager = new AnalysisManager(parent.getDisplay());
+        this.hideSuppressedRecords = hideSuppressedRecords ; 
     }
 
     @Override
@@ -265,6 +273,7 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
     @Override
     protected void doUpdate(AnalysisContextDistribution context) {
 
+        System.out.println("ViewStatisticsDistributionHistogram doUpdate "+this.hideSuppressedRecords);
         // The statistics builder
         final StatisticsBuilderInterruptible builder = context.handle.getStatistics().getInterruptibleInstance();
         final Hierarchy hierarchy = context.context.getHierarchy(context.context.getData(), context.attribute);
@@ -295,6 +304,21 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
                     return;
                 }
 
+                System.out.println("------------");
+                System.out.println(distribution.values.length);
+                ArrayList <String> ar = new ArrayList<String>();
+                for (int i=0; i<distribution.values.length;i++) {
+                    System.out.println(distribution.values[i]);
+//                    if ( (distribution.values[i]!="*") && (this.hideSuppressedRecords) ) {
+                    if ( (distribution.values[i]!="*") && (true) ) {                         
+                        ar.add(distribution.values[i]);
+                    }
+                };
+                String []  new_distValues = new String[ar.size()]; 
+                for (int i=0; i<ar.size();i++) {
+                    new_distValues[i] = ar.get(i);
+                };
+
                 // Update chart
                 chart.setRedraw(false);
 
@@ -317,7 +341,9 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
                 yAxis.adjustRange();
 
                 IAxis xAxis = axisSet.getXAxis(0);
-                xAxis.setCategorySeries(this.distribution.values);
+//                xAxis.setCategorySeries(this.distribution.values);
+                xAxis.setCategorySeries(new_distValues);
+                
                 xAxis.adjustRange();
                 updateCategories();
 

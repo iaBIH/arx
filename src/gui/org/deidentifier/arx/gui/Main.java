@@ -96,9 +96,15 @@ public class Main {
                 });
             }
             
+            main.onShow(new Runnable() {
+                public void run(){
+                    load(main, "/home/ibr/myGitHub/BIH/arx-local_issue365/data/example.deid");
+                }
+            });
+            
             // Show window
             main.show();
-            
+            main.getController().actionMenuEditAnonymize();
             // Check for updates
             new Update(main.getShell());
             

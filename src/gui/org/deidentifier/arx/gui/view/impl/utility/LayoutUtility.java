@@ -183,6 +183,7 @@ public class LayoutUtility implements ILayout {
         bottomRight = new Composite(bottomSash, SWT.NONE);
         bottomRight.setLayout(new FillLayout());
 
+        
         statisticsInputLayout = new LayoutUtilityStatistics(bottomLeft,
                                                  controller,
                                                  ModelPart.INPUT,

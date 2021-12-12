@@ -16,6 +16,8 @@
  */
 package org.deidentifier.arx.gui.view.impl.utility;
 
+import java.util.ArrayList;
+
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.aggregates.StatisticsBuilderInterruptible;
@@ -42,11 +44,15 @@ import org.eclipse.swt.widgets.Control;
  */
 public class ViewStatisticsDistributionTable extends ViewStatistics<AnalysisContextDistribution> {
 
+
     /** Internal stuff. */
     private ComponentTable  table;
     
     /** Internal stuff. */
     private AnalysisManager manager;
+
+    /** Internal stuff. */
+    public Boolean hideSuppressedRecords;
 
     /**
      * Creates a new instance.
@@ -59,10 +65,12 @@ public class ViewStatisticsDistributionTable extends ViewStatistics<AnalysisCont
     public ViewStatisticsDistributionTable(final Composite parent,
                                      final Controller controller,
                                      final ModelPart target,
-                                     final ModelPart reset) {
+                                     final ModelPart reset,
+                                     final Boolean hideSuppressedRecords) {
         
         super(parent, controller, target, reset, true);
         this.manager = new AnalysisManager(parent.getDisplay());
+        this.hideSuppressedRecords = hideSuppressedRecords;
     }
     
     @Override
@@ -116,6 +124,9 @@ public class ViewStatisticsDistributionTable extends ViewStatistics<AnalysisCont
     @Override
     protected void doUpdate(AnalysisContextDistribution context) {
 
+        
+        System.out.print(this.hideSuppressedRecords);
+
         // The statistics builder
         final StatisticsBuilderInterruptible builder = context.handle.getStatistics().getInterruptibleInstance();
         final Hierarchy hierarchy = context.context.getHierarchy(context.context.getData(), context.attribute);
@@ -145,18 +156,43 @@ public class ViewStatisticsDistributionTable extends ViewStatistics<AnalysisCont
                 if (stopped || !isEnabled()) {
                     return;
                 }
+                
+                 System.out.println("------------");
+                 System.out.println(distribution.values.length);
+                 ArrayList <String> ar = new ArrayList<String>();
+                 for (int i=0; i<distribution.values.length;i++) {
+                     System.out.println(distribution.values[i]);
+//                     if ( (distribution.values[i]!="*") && (this.hideSuppressedRecords) ) {
+                     if ( (distribution.values[i]!="*") && (true) ) {                         
+                         ar.add(distribution.values[i]);
+                     }
+                 };
+                 String []  new_distValues = new String[ar.size()]; 
+                 for (int i=0; i<ar.size();i++) {
+                     new_distValues[i] = ar.get(i);
+                 };
+                 
+                 //distribution.values = new_distValues;                                          
 
                 // Now update the table
                 table.setData(new IDataProvider() {
                     public int getColumnCount() {
                         return 2;
                     }
-                    public Object getDataValue(int arg0, int arg1) {
-                        return arg0 == 0 ? distribution.values[arg1] : SWTUtil.getPrettyString(distribution.frequency[arg1]*100d)+"%"; //$NON-NLS-1$
-                    }
-                    public int getRowCount() {
-                        return distribution.values.length;
-                    }
+//                    public Object getDataValue(int arg0, int arg1) {
+//                        return arg0 == 0 ? distribution.values[arg1] : SWTUtil.getPrettyString(distribution.frequency[arg1]*100d)+"%"; //$NON-NLS-1$
+//                    }
+//                    public int getRowCount() {
+//                        return distribution.values.length;
+//                    }
+                    
+                  public Object getDataValue(int arg0, int arg1) {
+                  return arg0 == 0 ? new_distValues[arg1] : SWTUtil.getPrettyString(distribution.frequency[arg1]*100d)+"%"; //$NON-NLS-1$
+              }
+              public int getRowCount() {
+                  return new_distValues.length;
+              }
+
                     public void setDataValue(int arg0, int arg1, Object arg2) { 
                         /* Ignore */
                     }
