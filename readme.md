@@ -1,4 +1,18 @@
 ARX - Open Source Data Anonymization Software
+            
+          Customised unofficial branch!    
+   
+
+- Add script to remove extra swt libs!
+- Use git pages to view the documentation!
+- Fix issue 364!
+- Fix issue 365!
+- Fix issue 366!
+- Fix issue 367!
+
+
+A helpful [API diagram](https://arx.deidentifier.org/development/api/) can be found here.
+
 ====
 
 Note

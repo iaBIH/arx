@@ -17,10 +17,14 @@
 package org.deidentifier.arx.gui.view.impl.utility;
 
 import org.deidentifier.arx.AttributeType.Hierarchy;
+
+import java.util.ArrayList;
+
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.aggregates.StatisticsBuilderInterruptible;
 import org.deidentifier.arx.aggregates.StatisticsFrequencyDistribution;
 import org.deidentifier.arx.gui.Controller;
+import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
@@ -71,6 +75,9 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
     
     /** Internal stuff. */
     private AnalysisManager  manager;
+
+    /** Internal stuff. */
+    public Boolean hideSuppressedRecords           = false;
 
     /**
      * Creates a new instance.
@@ -276,7 +283,7 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
 
             private boolean                         stopped = false;
             private StatisticsFrequencyDistribution distribution;
-
+            //private ViewStatisticsFrequencyDistribution distribution;
             @Override
             public int getProgress() {
                 return builder.getProgress();
@@ -295,6 +302,30 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
                     return;
                 }
 
+                // option to hide  suppressed records
+                ArrayList <String> ar = new ArrayList<String>();
+                for (int i=0; i<distribution.values.length;i++) {
+                     ar.add(distribution.values[i]);
+                 }
+                if (hideSuppressedRecords) {
+                    ar.clear();
+                    //this.distribution.removeSuppressedRecords();
+                    for (int i=0; i<distribution.values.length;i++) {
+                       if ( (distribution.values[i]!="*") && (true) ) {                         
+                           ar.add(distribution.values[i]);
+                       }
+                   }
+                }
+                String [] newDistValues  = new String [ar.size()];
+                double [] newDistFreqs   = new double [ar.size()];
+
+                
+                for (int i=0; i<ar.size();i++) {
+                    newDistValues[i] = ar.get(i);
+                    newDistFreqs[i] = distribution.frequency[i];
+                }       
+
+
                 // Update chart
                 chart.setRedraw(false);
 
@@ -304,10 +335,8 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
                 series.getLabel().setVisible(false);
                 series.getLabel().setFont(chart.getFont());
                 series.setBarColor(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
-                for (int i = 0; i < this.distribution.frequency.length; i++) {
-                    this.distribution.frequency[i] *= 100d;
-                }
-                series.setYSeries(this.distribution.frequency);
+                //series.setYSeries(this.distribution.frequency);
+                series.setYSeries(newDistFreqs);
                 chart.getLegend().setVisible(false);
 
                 IAxisSet axisSet = chart.getAxisSet();
@@ -317,7 +346,8 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
                 yAxis.adjustRange();
 
                 IAxis xAxis = axisSet.getXAxis(0);
-                xAxis.setCategorySeries(this.distribution.values);
+                //xAxis.setCategorySeries(this.distribution.values);
+                xAxis.setCategorySeries(newDistValues);
                 xAxis.adjustRange();
                 updateCategories();
 
@@ -345,6 +375,7 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
                 
                 // Perform work
                 this.distribution = builder.getFrequencyDistribution(column, hierarchy);
+                //this.distribution = (ViewStatisticsFrequencyDistribution) builder.getFrequencyDistribution(column, hierarchy);
 
                 // Our users are patient
                 while (System.currentTimeMillis() - time < MINIMAL_WORKING_TIME && !stopped){
@@ -367,5 +398,13 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
      */
     protected boolean isRunning() {
         return manager != null && manager.isRunning();
+    }
+
+    /**
+     * View/Hide suppressed records 
+     */
+    @Override
+    public void update(ModelEvent event, Boolean hsr) {
+        hideSuppressedRecords = hsr;
     }
 }

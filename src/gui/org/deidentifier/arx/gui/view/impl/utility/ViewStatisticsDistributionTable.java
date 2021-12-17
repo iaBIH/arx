@@ -17,10 +17,14 @@
 package org.deidentifier.arx.gui.view.impl.utility;
 
 import org.deidentifier.arx.AttributeType.Hierarchy;
+
+import java.util.ArrayList;
+
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.aggregates.StatisticsBuilderInterruptible;
 import org.deidentifier.arx.aggregates.StatisticsFrequencyDistribution;
 import org.deidentifier.arx.gui.Controller;
+import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
@@ -35,6 +39,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
+import smile.stat.distribution.Distribution;
+
 /**
  * This view displays a frequency distribution.
  *
@@ -47,6 +53,9 @@ public class ViewStatisticsDistributionTable extends ViewStatistics<AnalysisCont
     
     /** Internal stuff. */
     private AnalysisManager manager;
+
+    /** Internal stuff. */
+    public Boolean hideSuppressedRecords   = false;
 
     /**
      * Creates a new instance.
@@ -145,6 +154,30 @@ public class ViewStatisticsDistributionTable extends ViewStatistics<AnalysisCont
                 if (stopped || !isEnabled()) {
                     return;
                 }
+                
+                // hide/view the data 
+                // option to hide  suppressed records
+                ArrayList <String> ar = new ArrayList<String>();
+                for (int i=0; i<distribution.values.length;i++) {
+                     ar.add(distribution.values[i]);
+                 }
+                if (hideSuppressedRecords) {
+                    ar.clear();
+                    //this.distribution.removeSuppressedRecords();
+                    for (int i=0; i<distribution.values.length;i++) {
+                       if ( (distribution.values[i]!="*") && (true) ) {                         
+                           ar.add(distribution.values[i]);
+                       }
+                   }
+                }
+                String [] newDistValues  = new String [ar.size()];
+                double [] newDistFreqs   = new double [ar.size()];
+
+                
+                for (int i=0; i<ar.size();i++) {
+                    newDistValues[i] = ar.get(i);
+                    newDistFreqs[i] = distribution.frequency[i];
+                }       
 
                 // Now update the table
                 table.setData(new IDataProvider() {
@@ -152,10 +185,10 @@ public class ViewStatisticsDistributionTable extends ViewStatistics<AnalysisCont
                         return 2;
                     }
                     public Object getDataValue(int arg0, int arg1) {
-                        return arg0 == 0 ? distribution.values[arg1] : SWTUtil.getPrettyString(distribution.frequency[arg1]*100d)+"%"; //$NON-NLS-1$
+                        return arg0 == 0 ?newDistValues[arg1] : SWTUtil.getPrettyString(newDistFreqs[arg1]*100d)+"%"; //$NON-NLS-1$
                     }
                     public int getRowCount() {
-                        return distribution.values.length;
+                        return newDistValues.length;
                     }
                     public void setDataValue(int arg0, int arg1, Object arg2) { 
                         /* Ignore */
@@ -204,4 +237,13 @@ public class ViewStatisticsDistributionTable extends ViewStatistics<AnalysisCont
     protected boolean isRunning() {
         return manager != null && manager.isRunning();
     }
+    
+    /**
+     * View/Hide suppressed records 
+     */
+    @Override
+    public void update(ModelEvent event, Boolean hsr) {
+        this.hideSuppressedRecords = hsr;
+    }
+
 }
