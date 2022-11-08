@@ -19,8 +19,12 @@ package org.deidentifier.arx;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -66,15 +70,8 @@ public class ARXAnonymizer { // NO_UCD
 	
 	/** The global version string of this release*/
 	public static final String VERSION = "3.9.1";
-		
-	/** The global help variables*/
-	// Default: use online help from ARX website
-	// To use local help change to false
-	public static final boolean HELP_WEBSITE_ONLINE = true;
-	// help files should be placed in a help folder inside the repository e.g. <github-repository>/help/anonymization.html
-	// or in  a folder help next to the generated jar file e.g. help/anonymization.html       
-	public static final String HELP_WEBSITE = Resources.getMessage("DialogHelp.4");
-	
+
+
     /**
      * Temporary result of the ARX algorithm.
      * 
@@ -128,6 +125,7 @@ public class ARXAnonymizer { // NO_UCD
             this.optimum = algorithm.getGlobalOptimum();
             this.optimumFound = optimumFound;
         }
+        
 
         /**
          * Creates a final result from this temporary result.

@@ -17,12 +17,22 @@
 package org.deidentifier.arx.gui.view.impl.menu;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.deidentifier.arx.ARXAnonymizer;
+import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.gui.resources.Resources;
 
 /**
@@ -30,6 +40,22 @@ import org.deidentifier.arx.gui.resources.Resources;
  * @author Fabian Prasser
  */
 public class DialogHelpConfig {
+
+    
+    
+    public String version = ARXAnonymizer.VERSION;
+
+    
+    /** The global help variables*/
+    // Default: use online help from ARX website
+    // To use local help change to false
+    public boolean isOnlineHelp = true ; //Boolean.parseBoolean(this.getHelpConfig.get("DialogHelp.OnlineHelp"));
+
+    
+    // help files should be placed in a help folder inside the repository e.g. <github-repository>/help/anonymization.html
+    // or in  a folder help next to the generated jar file e.g. help/anonymization.html       
+    public String helpWebSite =  "http://arx.deidentifier.org/help/v"; //Resources.getMessage("DialogHelp.4");;
+
     
     /**
      * An entry in the help dialog.
@@ -46,7 +72,7 @@ public class DialogHelpConfig {
         
         /** URL */
         public final String url;
-        
+
         /**
          * Creates a new entry.
          *
@@ -69,27 +95,20 @@ public class DialogHelpConfig {
      */
     public DialogHelpConfig() {
         
-        String version = ARXAnonymizer.VERSION;
-        String helpWebSite = ARXAnonymizer.HELP_WEBSITE;
-        
-        if 	(!ARXAnonymizer.HELP_WEBSITE_ONLINE) {
+        helpWebSite =  getHelpConfig().get("DialogHelp.4");
+        isOnlineHelp = Boolean.parseBoolean(getHelpConfig().get("DialogHelp.OnlineHelp"));
+                
+        if (!isOnlineHelp) {
         	helpWebSite = "file:///" +  new File("help").getAbsolutePath();  
         	version = "";
         }
         
-        // Read messages.properties file
-        final ResourceBundle MESSAGES_BUNDLE = ResourceBundle.getBundle("org.deidentifier.arx.gui.resources.messages"); //$NON-NLS-1$
-        
-        // Get all keys 
-        Enumeration<String> messagesKeys = MESSAGES_BUNDLE.getKeys();
-              
         // Get all keys for the help web pages    
         List<String> configList = new ArrayList<String>();
-        while (messagesKeys.hasMoreElements()) {
-        	String currentKey =   messagesKeys.nextElement(); 
-        	if (currentKey.contains("DialogHelpConfig")){
-               configList.add(currentKey.substring(17));
-        	}
+        for (String key : getHelpConfig().keySet()) {
+            if (key.contains("DialogHelpConfig")){
+               configList.add(key.substring(17));
+            }
         }
         
         // Sorting
@@ -97,10 +116,32 @@ public class DialogHelpConfig {
         
         // Create the help entries
         for (String idx : configList) {
-             entries.add(new Entry("id." + idx, //$NON-NLS-1$
-                     Resources.getMessage("DialogHelpConfig." + idx), //$NON-NLS-1$
-                     helpWebSite + version + Resources.getMessage("DialogHelpPage." + idx))); //$NON-NLS-1$
+          entries.add(new Entry("id." + idx, //$NON-NLS-1$
+                   getHelpConfig().get("DialogHelpConfig." + idx), //$NON-NLS-1$
+                   helpWebSite + version + getHelpConfig().get("DialogHelpPage." + idx))); //$NON-NLS-1$
+
         }
+    }
+    
+    
+    /**
+     * Read help config file and return a sorted dictonary
+     *
+     * @return
+     */
+    public Map<String, String> getHelpConfig () {
+        // Read the help config and create a dictionary 
+         Map<String, String> helpConfig = new HashMap<String, String>();
+        try {
+            List<String> allLines = Files.readAllLines(Paths.get("config/ARX_Help.conf"), StandardCharsets.UTF_8);
+            for (String line : allLines) {
+                helpConfig.put(line.split("=")[0], line.split("=")[1]);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return helpConfig;
+
     }
     
     /**

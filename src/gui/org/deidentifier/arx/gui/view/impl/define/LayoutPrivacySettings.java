@@ -119,7 +119,8 @@ public class LayoutPrivacySettings implements ILayout {
         Composite composite1 = folder.createItem(Resources.getMessage("CriterionSelectionDialog.4"), null); //$NON-NLS-1$
         composite1.setLayout(SWTUtil.createGridLayout(1));
         this.criteriaView = new ViewPrivacyModels(composite1, controller, this);
-
+        
+        // Population
         Composite composite2 = folder.createItem(Resources.getMessage("CriterionSelectionDialog.5"), null); //$NON-NLS-1$
         composite2.setLayout(new FillLayout());
         new ViewPopulationModel(composite2, controller);
