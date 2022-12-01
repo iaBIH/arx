@@ -161,21 +161,21 @@ public class MainWindow implements IView {
 
         // Create the tab folder
         Map<Composite, String> helpids = new HashMap<Composite, String>();
-        root = new ComponentTitledFolder(shell, controller, null, "id-70", helpids); //$NON-NLS-1$
+        root = new ComponentTitledFolder(shell, controller, null, Resources.getMessage("DialogHelpLayout.Perspectives"), helpids); //$NON-NLS-1$
         root.setLayoutData(SWTUtil.createFillGridData());
 
         // Create the subviews
         Composite item1 = root.createItem(Resources.getMessage("MainWindow.2"), controller.getResources().getManagedImage("perspective_define.png")); //$NON-NLS-1$ //$NON-NLS-2$
-        helpids.put(item1, "id-3"); //$NON-NLS-1$
+        helpids.put(item1, Resources.getMessage("DialogHelpLayout.Configuration")); //$NON-NLS-1$
         new LayoutDefinition(item1, controller);
         Composite item2 = root.createItem(Resources.getMessage("MainWindow.3"), controller.getResources().getManagedImage("perspective_explore.png")); //$NON-NLS-1$ //$NON-NLS-2$
-        helpids.put(item2, "id-4"); //$NON-NLS-1$
+        helpids.put(item2, Resources.getMessage("DialogHelpLayout.Exploration")); //$NON-NLS-1$
         this.layoutExplore = new LayoutExplore(item2, controller);
         Composite item3 = root.createItem(Resources.getMessage("MainWindow.1"), controller.getResources().getManagedImage("perspective_analyze.png")); //$NON-NLS-1$ //$NON-NLS-2$
-        helpids.put(item3, "help.utility.overview"); //$NON-NLS-1$
+        helpids.put(item3, Resources.getMessage("DialogHelpLayout.Utility")); //$NON-NLS-1$
         new LayoutUtility(item3, controller);
         Composite item4 = root.createItem(Resources.getMessage("MainWindow.4"), controller.getResources().getManagedImage("perspective_risk.png")); //$NON-NLS-1$ //$NON-NLS-2$
-        helpids.put(item4, "help.risk.overview"); //$NON-NLS-1$
+        helpids.put(item4, Resources.getMessage("DialogHelpLayout.Risk")); //$NON-NLS-1$
         new LayoutRisks(item4, controller);
 
         // Hack to update visualizations
@@ -1106,7 +1106,23 @@ public class MainWindow implements IView {
                 return model != null && model.getSelectedAttribute() != null && model.getPerspective() == Perspective.CONFIGURATION;
             }
         });
-
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.150"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("file_import_hierarchy.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { controller.actionMenuFileImportAllHierarchies(); }
+            public boolean isEnabled(Model model) { 
+                return model != null && model.getSelectedAttribute() != null && model.getPerspective() == Perspective.CONFIGURATION;
+            }
+        });
+        
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.170"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("file_export_hierarchy.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { controller.actionMenuFileExportAllHierarchies(); }
+            public boolean isEnabled(Model model) { 
+                return model != null && model.getSelectedAttribute() != null && model.getPerspective() == Perspective.CONFIGURATION;
+            }
+        });
         items.add(new MainMenuSeparator());
 
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.19"), //$NON-NLS-1$
