@@ -57,11 +57,36 @@
   - Using quality model EntropyMetric.
   - Printing the input data and the input research subset.
   - Printing the result data and the result research subset.
-* [Example 11](https://github.com/arx-deidentifier/arx/blob/master/src/example/org/deidentifier/arx/examples/Example11.java) - how to apply the d-presence privacy model and create a research subset by providing a data selector
-* [Example 12](https://github.com/arx-deidentifier/arx/blob/master/src/example/org/deidentifier/arx/examples/Example12.java) - how to apply the d-presence privacy model and create a research subset by providing a complex data selector
-* [Example 13](https://github.com/arx-deidentifier/arx/blob/master/src/example/org/deidentifier/arx/examples/Example13.java) - a simple example for using multiple sensitive attributes and different privacy models
-* [Example 14](https://github.com/arx-deidentifier/arx/blob/master/src/example/org/deidentifier/arx/examples/Example14.java) - how to use the Loss Metric
-* [Example 16](https://github.com/arx-deidentifier/arx/blob/master/src/example/org/deidentifier/arx/examples/Example16.java) - how to use the API for access to basic statistics about the data
+* [Example 11](https://github.com/arx-deidentifier/arx/blob/master/src/example/org/deidentifier/arx/examples/Example11.java):
+  - Anonymization example using K-anonymity privacy model and d-presence criterion.
+  - Creating dataset and hierarchies manually using DefaultData and DefaultHierarchy classes. 
+  - Creating a research subset by providing a simple data selector using DataSelector and DataSubset classes.
+  - Using quality model EntropyMetric.
+  - Printing the input data and the input research subset.
+  - Printing the result data and the result research subset.
+* [Example 12](https://github.com/arx-deidentifier/arx/blob/master/src/example/org/deidentifier/arx/examples/Example12.java):
+  - Anonymization example using K-anonymity privacy model and d-presence criterion.
+  - Creating dataset and hierarchies manually using DefaultData and DefaultHierarchy classes. 
+  - Creating a research subset by providing a complex data selector using DataSelector and DataSubset classes.
+  - Using quality model EntropyMetric.
+  - Printing the input data and the input research subset.
+  - Printing the result data and the result research subset.
+* [Example 13](https://github.com/arx-deidentifier/arx/blob/master/src/example/org/deidentifier/arx/examples/Example13.java):
+- Anonymization example using K-anonymity privacy model, t-closeness, and l-diversity.        
+  - Creating dataset and hierarchies manually using DefaultData and DefaultHierarchy classes. 
+  - Define multiple sensitive attributes.
+  - Using quality model EntropyMetric.
+  - Printing the result.
+* [Example 14](https://github.com/arx-deidentifier/arx/blob/master/src/example/org/deidentifier/arx/examples/Example14.java):
+  - Simple anonymization example using K-anonymity privacy model.
+  - Creating dataset and hierarchies manually using DefaultData and DefaultHierarchy classes. 
+  - Using quality model LossMetric with weights and generalization/suppressopn factor.
+  - Printing the result.
+* [Example 16](https://github.com/arx-deidentifier/arx/blob/master/src/example/org/deidentifier/arx/examples/Example16.java):
+  - Simple anonymization example using K-anonymity privacy model.
+  - Creating dataset and hierarchies manually using DefaultData and DefaultHierarchy classes. 
+  - Printing the input data and the result.
+  - 
 * [Example 17](https://github.com/arx-deidentifier/arx/blob/master/src/example/org/deidentifier/arx/examples/Example17.java) - how to list the available data types
 * [Example 18](https://github.com/arx-deidentifier/arx/blob/master/src/example/org/deidentifier/arx/examples/Example18.java) - how to use the builders for generalization hierarchies
 * [Example 19](https://github.com/arx-deidentifier/arx/blob/master/src/example/org/deidentifier/arx/examples/Example19.java) - how to use the API for creating different output representations of an input dataset
