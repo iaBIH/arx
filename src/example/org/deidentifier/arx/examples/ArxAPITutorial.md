@@ -61,19 +61,93 @@
 
 
  ## API Howtos:
+ ### Data
 - [Create a data and hierarchies manually](#create-a-data-and-hierarchies-manually)
 - [Import or read data and hierarchies from csv files](#import-or-read-data-and-hierarchies-from-csv-files)
+- [Use data handles for input and output data](#)
 - [Change Attribute data type e.g. to date](#change-attribute-data-type-eg-to-date)
 - [Change Attribute data type format e.g. to dd.MM.yyyy](#change-attribute-data-type-format-eg-to-ddmmyyyy)
-- [Change Attribute type e.g. to sensitive or quasi-identifier](#change-attribute-data-type-format-eg-to-ddmmyyyy)
+- [Change Attribute type e.g. to sensitive or quasi-identifier](#change-attribute-type-eg-to-sensitive-or-quasi-identifier)
+- [Use attribute without hierarchy](#change-attribute-type-eg-to-sensitive-or-quasi-identifier)
+
 - [Export or write data and hierarchies to csv files](#export-or-write-data-and-hierarchies-to-csv-files)
+### Configueration
 - [Create anonymization configueration](#create-anonymization-configueration)
-- [Change anonymization configueration metric](#)
+- [Change the supression limit](#create-anonymization-configueration)
+- [Change the PracticalMonotonicity](#create-anonymization-configueration)
+- [Change the Maximum Outliers](#create-anonymization-configueration)
+#### Algorithm
+- [Change anonymization configueration algorithm ](#)
+- [Use Heuristic Search algorithm ](#)
+- [Use Genetic algorithm](#)
+#### Privacy models
+- [Add K-anonymity privacy model (critirion)](#)
+- [Add l-diversity privacy model (critirion)](#)
+- [Add t-closeness privacy model (critirion)](#)
+#### Data Quality 
+- [Change anonymization configueration data quality (metric)](#)
+- [Use quality model (metric) HeightMetric](#)
+- [Use quality model (metric) Loss with weights](#)
+### Anonymization
 - [Start anonymization process](#start-anonymization-process)
-- [Print input and output data and research subset](#print-input-and-output-data)
+### Research Subset
 - [Create subset research data manually](#create-subset-research-data-manually)
 - [Create subset research data using simple selector (query)](#create-subset-research-data-using-simple-selector-query)
 - [Create subset research data using simple selector (query)](#create-subset-research-data-using-comblix-selector-query)
+### Exploration
+- [Find specific transformation](#)
+- [Apply a transformation](#)
+### Printing
+- [Print input data, output data, input research subset, and output research subset](#print-input-and-output-data)
+- [Print anonymization process info](#)
+- [Print input and result statistics](#)
+- [Use classification to evaluate the result](#)
+- [Print risk information Example29](#)
+### TODOs
+- [Example 17 how to list the available data types](#)
+- [Example 18 - how to use the builders for generalization hierarchies](#)
+- [Example 19 - how to use the API for creating different output representations of an input dataset](#)
+- [Example 20 - how to use aggregate functions](#)
+- [Example 21 - demonstrates the use of the data import facilities provided by the ARX framework. Data can be imported from various types of sources, e.g. CSV files, Excel files and databases (using JDBC). The API is mostly the same for all of these sources, although not all options might be available in each case. Refer to the comments further down below for details about particular sources.](#)
+- [Example 22 - how to use the l-diversity privacy model without protecting sensitive assocations](#)
+- [Example 23 - how to use multiple instances of l-diversity without protecting sensitive associations](#)
+- [Example 24 - how to directly use empty and functional hierarchies](#)
+- [Example 25 - an example for using the generalized loss metric with different types of generalization hierarchies](#)
+- [Example 26 - how to use an interval-based hierarchy builder with high precision](#)
+- [Example 27 - how to use data cleansing capabilities](#)
+- [Example 28 - how to use data cleansing using the DataSource functionality](#)
+- [Example 29 - how to perform risk analyses with the API](#)
+- [Example 30 - how to compute summary statistics](#)
+- [Example 31 - how to use microaggregation](#)
+- [Example 32 - how to use microaggregation with generalization](#)
+- [Example 33 - how to use microaggregation. It also demonstrates how, since - version 3.1. of ARX attribute types and transformation methods should be specified separately](#)
+- [Example 34 - how to use a heuristic search algorithm](#)
+- [Example 35 - how to find HIPAA identifiers](#)
+- [Example 36 - how to use utility-based microaggregation](#)
+- [Example 37 - how to use data-dependent and data-independent (e,d)-DP](#)
+- [Example 38 - how to use local recoding with ARX](#)
+- [Example 39 - how to compare data mining performance](#)
+- [Example 40 - how to compare data mining performance](#)
+- [Example 41 - how to use the k-map model](#)
+- [Example 42 - how to use the k-map and d-presence models combined](#)
+- [Example 43 - how to evaluate combined risk metrics](#)
+- [Example 44 - how to use the k-map privacy model with a statistical estimator](#)
+- [Example 45 - how to use the mixed risk model](#)
+- [Example 46 - how to use the distribution of risks](#)
+- [Example 47 - an example for evaluating distinction and separation of attributes as described in R. Motwani et al. "Efficient algorithms for masking and finding quasi-identifiers" Proc. VLDB Conf., 2007.](#)
+- [Example 48 - how to use ordered distance t-closeness. Implements Example 3 from the paper Li et al. "t-Closeness: Privacy Beyond k-Anonymity and l-Diversity"](#)
+- [Example 49 - examples of using the no-attack variant of the game-theoretic approach for performing a monetary cost/benefit analysis using prosecutor risk](#)
+- [Example 50 - examples of using the no-attack variant of the game-theoretic approach for performing a monetary cost/benefit analysis using journalist risk](#)
+- [Example 51 - examples of using the game-theoretic approach for performing a monetary cost/benefit analysis using prosecutor risk](#)
+- [Example 52 - examples of using the game-theoretic approach for performing a monetary cost/benefit analysis using journalist risk](#)
+- [Example 53 - how to generate reports](#)
+- [Example 54 - how to access quality statistics](#)
+- [Example 55 - how to use a fast algorithm for local recoding with ARX](#)
+- [Example 56 - how to evaluate risk with wildcard matching](#)
+- [Example 57 - how to analyze risks with wildcards for data transformed with cell suppression](#)
+- [Example 58 - an example that shows consistent handling of suppressed records in input and output](#)
+- [Example 59 - an example that shows handling of suppressed values and records in input data](#)
+- [Example 60 - an example of processing high-dimensional data](#)
 
 
 ### Create a data and hierarchies manually
@@ -190,7 +264,7 @@ Related examples: [Example]()
 
 Related examples: [Example]()
 
-[Go to contents](#api-howtos)
+[Go to contents](#api-howtos)Cool
 
 ### Start anonymization process
 
