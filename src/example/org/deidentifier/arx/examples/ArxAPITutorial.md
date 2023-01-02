@@ -70,6 +70,7 @@
 - [Change Attribute type e.g. to sensitive or quasi-identifier](#change-attribute-type-eg-to-sensitive-or-quasi-identifier)
 - [Use attribute without hierarchy](#change-attribute-type-eg-to-sensitive-or-quasi-identifier)
 
+- [Crearing generalization using hierarchies]()
 - [Export or write data and hierarchies to csv files](#export-or-write-data-and-hierarchies-to-csv-files)
 ### Configueration
 - [Create anonymization configueration](#create-anonymization-configueration)
@@ -189,7 +190,21 @@
         data.getDefinition().setAttributeType("zipcode", zipcodeHierarchy);
 
 
+Related examples: [Example18](),[Example24](),[Example25](), and [Example26]().
+
+
+[Go to contents](#api-howtos)
+
+### Crearing generalization using hierarchies
+One can create hierarchy using a simple text editor and save the file as CSV then can load it again. Here is an example:
+
+      TODO: 
+
+Another way is to use the hierarchy builder using the GUI as described [here]() and [here](). Or using the API e.g.
+
+   
 Related examples: [Example1]()
+
 
 [Go to contents](#api-howtos)
 
