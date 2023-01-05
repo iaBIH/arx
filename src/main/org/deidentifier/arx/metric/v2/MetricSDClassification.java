@@ -85,15 +85,19 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
      */
     protected MetricSDClassification(double gsFactor) {
         super(false, false, false, gsFactor);
+        System.out.println("MetricSDClassification gsFactor......");
+        
     }
 
     @Override
     public ILSingleDimensional createMaxInformationLoss() {
+        System.out.println("ILSingleDimensional createMaxInformationLoss......");
         return new ILSingleDimensional(1d);
     }
     
     @Override
     public ILSingleDimensional createMinInformationLoss() {
+        System.out.println("ILSingleDimensional createMinInformationLoss......");        
         return new ILSingleDimensional(0d);
     }
     
@@ -103,6 +107,7 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
      * @return
      */
     public MetricConfiguration getConfiguration() {
+        System.out.println("MetricConfiguration MetricConfiguration......");                
         return new MetricConfiguration(false, // monotonic
                                        super.getGeneralizationSuppressionFactor(), // gs-factor
                                        false, // precomputed
@@ -116,6 +121,7 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
      * @return the penaltyDifferentFromMajority
      */
     public double getPenaltyInfrequentResponse() {
+        //System.out.println("getPenaltyInfrequentResponse ......");                        
         return penaltyInfrequentResponse;
     }
     
@@ -124,6 +130,7 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
      * @return the penaltyNoMajority
      */
     public double getPenaltyNoMajorityResponse() {
+        //System.out.println("getPenaltyNoMajorityResponse ......");                                
         return penaltyNoMajorityResponse;
     }
 
@@ -132,6 +139,7 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
      * @return the penaltySuppressed
      */
     public double getPenaltySuppressed() {
+        //System.out.println("getPenaltySuppressed ......");                                
         return penaltySuppressed;
     }
     
@@ -143,7 +151,8 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
      * Proceedings on Privacy Enhancing Technologies. 2018(1):67-87.
      */
     public ILScore getScore(final Transformation<?> node, final HashGroupify groupify) {
-        
+        System.out.println("ILScore getScore ......");                                
+
         if (sensitivity == null) {
             throw new RuntimeException("Parameters required for differential privacy have not been initialized yet");
         }
@@ -211,16 +220,20 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
 
     @Override
     public boolean isGSFactorSupported() {
+        System.out.println("isGSFactorSupported  ......");                                        
         return true;
     }
     
     @Override
     public boolean isScoreFunctionSupported() {
+        System.out.println("isScoreFunctionSupported  ......");                                        
+        
         return true;
     }
 
     @Override
     public ElementData render(ARXConfiguration config) {
+        System.out.println("ElementData  render ......");                                                
         ElementData result = new ElementData("Classification accuracy");
         result.addProperty("Monotonic", this.isMonotonic(config.getSuppressionLimit()));
         result.addProperty("Penalty for suppressed features", this.getPenaltySuppressed());
@@ -231,6 +244,7 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
 
     @Override
     public String toString() {
+        System.out.println("toString   ......");                                                        
         return "Classification accuracy";
     }
     
@@ -241,6 +255,7 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
      * @return
      */
     private int[] getIndices(DataDefinition definition, Data data) {
+        System.out.println("getIndices   ......");                                                        
 
         // Extract indices of response variables
         List<Integer> indices = new ArrayList<>();
@@ -269,7 +284,8 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
      * @return
      */
     private double getPenaltyDistribution(Distribution distribution, double scaleFactor) {
-        
+        //System.out.println("getPenaltyDistribution   ......");                                                        
+
         int[] statistics = getStatistics(distribution);
 
         int count = statistics[0];
@@ -301,6 +317,7 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
      * @return
      */
     private double getPenaltyOutlier(int count) {
+        //System.out.println("getPenaltyOutlier   ......");                                                        
 
         // According penalty for all records and response variables in this class
         return count * (penaltySuppressed / penaltyMax);
@@ -315,7 +332,8 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
      *         - the frequency of the second most frequent attribute value
      */
     private int[] getStatistics(Distribution distribution) {
-        
+        //System.out.println("getStatistics   ......");                                                        
+
         // Find frequencies of most frequent and second most frequent attribute values
         
         int[] statistics = new int[] {0,-1,-1}; 
@@ -352,6 +370,7 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
 
     @Override
     protected ILSingleDimensionalWithBound getInformationLossInternal(final Transformation<?> node, final HashGroupify g) {
+        //System.out.println("protected ILSingleDimensionalWithBound getInformationLossInternal(final Transformation<?> node, final HashGroupify g) ......");                                                        
 
         // Prepare
         double penalty = 0d;
@@ -408,6 +427,7 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
 
     @Override
     protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation<?> node, HashGroupifyEntry m) {
+        System.out.println("protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation<?> node, HashGroupifyEntry m) ......");                                                        
 
         // TODO: Can a lower bound be calculated for this model?
         // TODO: We can not consider QI target variables here...
@@ -429,12 +449,16 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
     @Override
     protected ILSingleDimensional getLowerBoundInternal(Transformation<?> node) {
         // TODO: Can a lower bound be calculated for this model?
+        //System.out.println("ILSingleDimensional getLowerBoundInternal(Transformation<?> node) ......");                                                        
+
         return null;
     }
 
     @Override
     protected ILSingleDimensional getLowerBoundInternal(Transformation<?> node, HashGroupify groupify) {
         // TODO: Can a lower bound be calculated for this model?
+        //System.out.println("protected ILSingleDimensional getLowerBoundInternal(Transformation<?> node, HashGroupify groupify) ......");                                                        
+        
         return null;
     }
 
@@ -444,6 +468,8 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
                                       Data input,
                                       GeneralizationHierarchy[] hierarchies,
                                       ARXConfiguration config) {
+
+        System.out.println("protected void initializeInternal ......");                                                                
 
         // Super
         super.initializeInternal(manager, definition, input, hierarchies, config);

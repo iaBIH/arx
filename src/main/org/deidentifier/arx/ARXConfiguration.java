@@ -393,6 +393,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     private Integer                            heuristicSearchStepLimit              = Integer.MAX_VALUE;
 
     /** Cost/benefit configuration */
+    //IANote: calling an empty function, protected ARXCostBenefitConfiguration()
     private ARXCostBenefitConfiguration        costBenefitConfiguration              = ARXCostBenefitConfiguration.create();
 
     /** The privacy budget to use for the data-dependent differential privacy search algorithm */

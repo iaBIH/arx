@@ -19,8 +19,12 @@ package org.deidentifier.arx;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -49,6 +53,7 @@ import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.framework.lattice.SolutionSpaceLong;
 import org.deidentifier.arx.framework.lattice.Transformation;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.metric.v2.MetricSDClassification;
 
 /**
@@ -65,6 +70,7 @@ public class ARXAnonymizer { // NO_UCD
 	
 	/** The global version string of this release*/
 	public static final String VERSION = "3.9.1";
+
 
     /**
      * Temporary result of the ARX algorithm.
@@ -119,6 +125,7 @@ public class ARXAnonymizer { // NO_UCD
             this.optimum = algorithm.getGlobalOptimum();
             this.optimumFound = optimumFound;
         }
+        
 
         /**
          * Creates a final result from this temporary result.
@@ -627,7 +634,7 @@ public class ARXAnonymizer { // NO_UCD
         
         // Prepare
     	int numQIs = manager.getHierarchies().length;
-    	
+    	System.out.println("getAlgorithm getHierarchies.length : " + numQIs);
     	// Execute DP algorithm, if needed
         if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)){
             EDDifferentialPrivacy edpModel = config.getPrivacyModel(EDDifferentialPrivacy.class);
@@ -641,9 +648,11 @@ public class ARXAnonymizer { // NO_UCD
         }
     	
     	// Select algorithm to execute
-    	switch(config.getAlgorithm()) {
+        System.out.println("getAlgorithm config.getHeuristicSearchThreshold() " + config.getHeuristicSearchThreshold());       
+
+        switch(config.getAlgorithm()) {
     	case OPTIMAL:
-    	    
+            System.out.println("getAlgorithm FLASHAlgorithm OPTIMAL");      
     	    // Sanity check
     	    if (!(solutionSpace instanceof SolutionSpaceLong) ||
     	          solutionSpace.getSize().compareTo(BigInteger.valueOf(config.getHeuristicSearchThreshold())) > 0) {
@@ -657,7 +666,8 @@ public class ARXAnonymizer { // NO_UCD
                                          Integer.MAX_VALUE);
     	    
     	case BEST_EFFORT_BINARY:
-    	    
+            System.out.println("getAlgorithm  FLASHAlgorithm BEST_EFFORT_BINARY");      
+
             // Sanity check
             if (!(solutionSpace instanceof SolutionSpaceLong) ||
                   solutionSpace.getSize().compareTo(BigInteger.valueOf(config.getHeuristicSearchThreshold())) > 0) {
@@ -671,19 +681,22 @@ public class ARXAnonymizer { // NO_UCD
                                          config.getHeuristicSearchStepLimit(SearchStepSemantics.CHECKS, numQIs));
             
     	case BEST_EFFORT_BOTTOM_UP:
-    	    
+            System.out.println("getAlgorithm LIGHTNINGAlgorithm BEST_EFFORT_BOTTOM_UP");      
+
     	    // Run lightning
             return LIGHTNINGAlgorithm.create(solutionSpace, checker, config.getHeuristicSearchTimeLimit(),
                                              config.getHeuristicSearchStepLimit(SearchStepSemantics.CHECKS, numQIs));
     	    
     	case BEST_EFFORT_TOP_DOWN:
+            System.out.println("getAlgorithm LIGHTNINGTopDownAlgorithm BEST_EFFORT_TOP_DOWN");      
 
             // Run lightning
             return LIGHTNINGTopDownAlgorithm.create(solutionSpace, checker, config.getHeuristicSearchTimeLimit(),
                                                     config.getHeuristicSearchStepLimit(SearchStepSemantics.CHECKS, numQIs));
             
     	case BEST_EFFORT_GENETIC:
-    	    
+            System.out.println("getAlgorithm  BEST_EFFORT_GENETIC");   
+            
     	    // Run the genetic algorithm
     	    return GeneticAlgorithm.create(solutionSpace,
                                       checker,
@@ -741,7 +754,7 @@ public class ARXAnonymizer { // NO_UCD
     protected Result anonymize(final DataManager manager,
                                final DataDefinition definition,
                                final ARXConfiguration config) throws IOException {
-
+         System.out.println("Start ANonymization ..............");  
         // Initialize
         config.initialize(manager);
 

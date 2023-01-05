@@ -78,6 +78,12 @@ public class LayoutUtilityStatistics implements ILayout, IView {
     private final ToolItem                              enable;
 
     /** View */
+    private final ToolItem                              showSuppressed;
+
+    /** View */
+    private final ToolItem                              showNull;
+
+    /** View */
     private final Image                                 enabled;
 
     /** View */
@@ -114,36 +120,59 @@ public class LayoutUtilityStatistics implements ILayout, IView {
         
         controller.addListener(ModelPart.MODEL, this);
         controller.addListener(ModelPart.SELECTED_UTILITY_VISUALIZATION, this);
+        controller.addListener(ModelPart.SHOW_SPECIAL_VALUES, this);
+
+        // Create suppressed value button
+        final String label1 = Resources.getMessage("StatisticsView.13"); //$NON-NLS-1$
+        ComponentTitledFolderButtonBar bar = new ComponentTitledFolderButtonBar("id-50", helpids); //$NON-NLS-1$
+        bar.add(label1, controller.getResources().getManagedImage("suppressed_value.png"), true, //$NON-NLS-1$
+        new Runnable() {  
+            @Override public void run() {
+            toggleShowSuppressed();
+        }});
+        
+        // Create null value button
+        final String label2 = Resources.getMessage("StatisticsView.14"); //$NON-NLS-1$
+        bar.add(label2, controller.getResources().getManagedImage("null_value.png"), true, //$NON-NLS-1$ 
+        new Runnable() {
+            @Override public void run() {
+            toggleShowNull();
+        }});
 
         // Create enable/disable button
-        final String label = Resources.getMessage("StatisticsView.3"); //$NON-NLS-1$
-        ComponentTitledFolderButtonBar bar = new ComponentTitledFolderButtonBar("id-50", helpids); //$NON-NLS-1$
-        bar.add(label, disabled, true, new Runnable() { @Override public void run() {
+        final String label3 = Resources.getMessage("StatisticsView.3"); //$NON-NLS-1$
+        bar.add(label3, disabled, true, 
+        new Runnable() {
+            @Override public void run() {
             toggleEnabled();
-            toggleImage(); 
+            toggleEnabledImage(); 
         }});
         
         // Create the tab folder
         folder = new ComponentTitledFolder(parent, controller, bar, null, false, true);
         
         // Register tabs
-        this.registerView(new ViewStatisticsSummaryTable(folder.createItem(TAB_SUMMARY, null, true), controller, target, reset), "help.utility.summary"); //$NON-NLS-1$
-        this.registerView(new ViewStatisticsDistributionHistogram(folder.createItem(TAB_DISTRIBUTION, null, true), controller, target, reset), "help.utility.distribution"); //$NON-NLS-1$
-        this.registerView(new ViewStatisticsDistributionTable(folder.createItem(TAB_DISTRIBUTION_TABLE, null, true), controller, target, reset), "help.utility.distribution"); //$NON-NLS-1$
-        this.registerView(new ViewStatisticsContingencyHeatmap(folder.createItem(TAB_CONTINGENCY, null, true), controller, target, reset), "help.utility.contingency"); //$NON-NLS-1$
-        this.registerView(new ViewStatisticsContingencyTable(folder.createItem(TAB_CONTINGENCY_TABLE, null, true), controller, target, reset), "help.utility.contingency"); //$NON-NLS-1$
-        this.registerView(new ViewStatisticsEquivalenceClassTable(folder.createItem(TAB_CLASSES_TABLE, null, true), controller, target, reset), "help.utility.classes"); //$NON-NLS-1$
+        this.registerView(new ViewStatisticsSummaryTable(folder.createItem(TAB_SUMMARY, null, true), controller, target, reset), Resources.getMessage("DialogHelpLayout.UtilitySummary")); //$NON-NLS-1$
+        this.registerView(new ViewStatisticsDistributionHistogram(folder.createItem(TAB_DISTRIBUTION, null, true), controller, target, reset), Resources.getMessage("DialogHelpLayout.UtilityDistribution")); //$NON-NLS-1$
+        this.registerView(new ViewStatisticsDistributionTable(folder.createItem(TAB_DISTRIBUTION_TABLE, null, true), controller, target, reset), Resources.getMessage("DialogHelpLayout.UtilityDistribution")); //$NON-NLS-1$
+        this.registerView(new ViewStatisticsContingencyHeatmap(folder.createItem(TAB_CONTINGENCY, null, true), controller, target, reset), Resources.getMessage("DialogHelpLayout.UtilityContingency")); //$NON-NLS-1$
+        this.registerView(new ViewStatisticsContingencyTable(folder.createItem(TAB_CONTINGENCY_TABLE, null, true), controller, target, reset), Resources.getMessage("DialogHelpLayout.xUtilityContingency")); //$NON-NLS-1$
+        this.registerView(new ViewStatisticsEquivalenceClassTable(folder.createItem(TAB_CLASSES_TABLE, null, true), controller, target, reset), Resources.getMessage("DialogHelpLayout.UtilityClasses")); //$NON-NLS-1$
         if (target == ModelPart.INPUT) {
-            this.registerView(new ViewPropertiesInput(folder.createItem(TAB_PROPERTIES, null, true), controller), "help.utility.inputproperties"); //$NON-NLS-1$
-            this.registerView(new ViewStatisticsClassificationAttributes(folder.createItem(TAB_CLASSIFICATION_ANALYSIS, null, false), controller), "help.utility.accuracy"); //$NON-NLS-1$
+            this.registerView(new ViewPropertiesInput(folder.createItem(TAB_PROPERTIES, null, true), controller), Resources.getMessage("DialogHelpLayout.UtilityInputs")); //$NON-NLS-1$
+            this.registerView(new ViewStatisticsClassificationAttributes(folder.createItem(TAB_CLASSIFICATION_ANALYSIS, null, false), controller), Resources.getMessage("DialogHelpLayout.UtilityAccuracy")); //$NON-NLS-1$
         } else {
-            this.registerView(new ViewPropertiesOutput(folder.createItem(TAB_PROPERTIES, null, true), controller), "help.utility.outputproperties"); //$NON-NLS-1$
-            this.registerView(new ViewStatisticsClassificationConfiguration(folder.createItem(TAB_CLASSIFICATION_ANALYSIS, null, false, new StackLayout()), controller), "help.utility.accuracy"); //$NON-NLS-1$
+            this.registerView(new ViewPropertiesOutput(folder.createItem(TAB_PROPERTIES, null, true), controller), Resources.getMessage("DialogHelpLayout.UtilityOutputs")); //$NON-NLS-1$
+            this.registerView(new ViewStatisticsClassificationConfiguration(folder.createItem(TAB_CLASSIFICATION_ANALYSIS, null, false, new StackLayout()), controller), Resources.getMessage("DialogHelpLayout.UtilityAccuracy")); //$NON-NLS-1$
         }
         
-        // Init folder
+        // Initialize folder
         this.folder.setSelection(0);
-        this.enable = folder.getButtonItem(label);
+        this.showSuppressed = folder.getButtonItem(label1);
+        this.showSuppressed.setEnabled(false);
+        this.showNull = folder.getButtonItem(label2);
+        this.showNull.setEnabled(false);
+        this.enable = folder.getButtonItem(label3);
         this.enable.setEnabled(false);
         
         // Set initial visibility
@@ -191,6 +220,10 @@ public class LayoutUtilityStatistics implements ILayout, IView {
         enable.setSelection(true);
         enable.setImage(enabled);
         enable.setEnabled(false);
+        showSuppressed.setSelection(true);
+        showSuppressed.setEnabled(false);
+        showNull.setSelection(true);
+        showNull.setEnabled(false);
     }
     
     /**
@@ -229,10 +262,19 @@ public class LayoutUtilityStatistics implements ILayout, IView {
             this.model = (Model)event.data;
             this.enable.setEnabled(true);
             this.enable.setSelection(model.isVisualizationEnabled());
-            this.toggleImage();
+            this.toggleEnabledImage();
+            this.showSuppressed.setSelection(model.isShowSuppressedValues());
+            this.showSuppressed.setEnabled(true);
+            this.showNull.setSelection(model.isShowNullValues());
+            this.showNull.setEnabled(true);
         } else if (event.part == ModelPart.SELECTED_UTILITY_VISUALIZATION) {
             this.enable.setSelection(model.isVisualizationEnabled());
-            this.toggleImage();
+            this.toggleEnabledImage();
+        } else if (event.part == ModelPart.SHOW_SPECIAL_VALUES) {
+            this.showSuppressed.setSelection(model.isShowSuppressedValues());
+            this.showSuppressed.setEnabled(true);
+            this.showNull.setSelection(model.isShowNullValues());
+            this.showNull.setEnabled(true);
         }
     }
 
@@ -265,9 +307,25 @@ public class LayoutUtilityStatistics implements ILayout, IView {
     }
 
     /**
+     * Toggle special values shown.
+     */
+    private void toggleShowSuppressed() {
+        this.model.setShowSuppressedValues(this.showSuppressed.getSelection());
+        this.controller.update(new ModelEvent(this, ModelPart.SHOW_SPECIAL_VALUES, showSuppressed.getSelection()));
+    }
+
+    /**
+     * Toggle special values shown.
+     */
+    private void toggleShowNull() {
+        this.model.setShowNullValues(this.showNull.getSelection());
+        this.controller.update(new ModelEvent(this, ModelPart.SHOW_SPECIAL_VALUES, showNull.getSelection()));
+    }
+
+    /**
      * Toggle image.
      */
-    private void toggleImage(){
+    private void toggleEnabledImage(){
         if (enable.getSelection()) {
             enable.setImage(enabled);
         } else {

@@ -1162,32 +1162,41 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * @return
      */
     private static Metric<?> createMetric(Metric<?> metric) {
-        
+        System.out.println("private static Metric<?> createMetric(Metric<?> metric) ...");
         if (metric instanceof MetricAECS) {
+            System.out.println("MetricAECS  ...");
             return __MetricV2.createAECSMetric((int)((MetricAECS)metric).getRowCount());
         } else if (metric instanceof MetricDM) {
+            System.out.println("MetricDM  ...");
             return __MetricV2.createDiscernabilityMetric(false, ((MetricDM)metric).getRowCount());
         } else if (metric instanceof MetricDMStar) {
+            System.out.println("MetricDMStar  ...");
             return __MetricV2.createDiscernabilityMetric(true, ((MetricDMStar)metric).getRowCount());
         } else if (metric instanceof MetricEntropy) {
+            System.out.println("MetricEntropy  ...");            
             return __MetricV2.createEntropyMetric(true, 
                                                   ((MetricEntropy)metric).getCache(), 
                                                   ((MetricEntropy)metric).getCardinalities(), 
                                                   ((MetricEntropy)metric).getHierarchies());
         } else if (metric instanceof MetricNMEntropy) {
+            System.out.println("MetricNMEntropy  ...");
             return __MetricV2.createEntropyMetric(false, 
                                                   ((MetricEntropy)metric).getCache(), 
                                                   ((MetricEntropy)metric).getCardinalities(), 
                                                   ((MetricEntropy)metric).getHierarchies());
         } else if (metric instanceof MetricNMPrecision) {
+            System.out.println("MetricNMPrecision  ...");
             return __MetricV2.createPrecisionMetric(false, ((MetricNMPrecision)metric).getHeights(),
                                                            ((MetricNMPrecision)metric).getCells());
         } else if (metric instanceof MetricPrecision) {
+            System.out.println("MetricPrecision  ...");
             return __MetricV2.createPrecisionMetric(true, ((MetricPrecision)metric).getHeights(),
                                                           ((MetricPrecision)metric).getCells());
         } else if (metric instanceof MetricStatic) {
+            System.out.println("MetricStatic  ...");
             return __MetricV2.createStaticMetric(((MetricStatic)metric)._infoloss);
         } else {
+            System.out.println("else metric  ...");            
             return metric;
         }
     }
@@ -1234,6 +1243,8 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * @param gsFactor
      */
     protected Metric(final boolean monotonicWithGeneralization, final boolean monotonicWithSuppression, final boolean independent, final double gsFactor) {
+        System.out.println("Metric.java  ..........");
+
         this.monotonicWithGeneralization = monotonicWithGeneralization;
         this.monotonic = monotonicWithSuppression;
         this.independent = independent;

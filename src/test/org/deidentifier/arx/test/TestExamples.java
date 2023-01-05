@@ -19,7 +19,15 @@ package org.deidentifier.arx.test;
 
 import java.io.IOException;
 
-import org.deidentifier.arx.examples.Example1;
+import org.deidentifier.arx.examples.Example01;
+import org.deidentifier.arx.examples.Example02;
+import org.deidentifier.arx.examples.Example03;
+import org.deidentifier.arx.examples.Example04;
+import org.deidentifier.arx.examples.Example05;
+import org.deidentifier.arx.examples.Example06;
+import org.deidentifier.arx.examples.Example07;
+import org.deidentifier.arx.examples.Example08;
+import org.deidentifier.arx.examples.Example09;
 import org.deidentifier.arx.examples.Example10;
 import org.deidentifier.arx.examples.Example11;
 import org.deidentifier.arx.examples.Example12;
@@ -29,7 +37,6 @@ import org.deidentifier.arx.examples.Example16;
 import org.deidentifier.arx.examples.Example17;
 import org.deidentifier.arx.examples.Example18;
 import org.deidentifier.arx.examples.Example19;
-import org.deidentifier.arx.examples.Example2;
 import org.deidentifier.arx.examples.Example20;
 import org.deidentifier.arx.examples.Example21;
 import org.deidentifier.arx.examples.Example22;
@@ -40,7 +47,6 @@ import org.deidentifier.arx.examples.Example26;
 import org.deidentifier.arx.examples.Example27;
 import org.deidentifier.arx.examples.Example28;
 import org.deidentifier.arx.examples.Example29;
-import org.deidentifier.arx.examples.Example3;
 import org.deidentifier.arx.examples.Example30;
 import org.deidentifier.arx.examples.Example31;
 import org.deidentifier.arx.examples.Example32;
@@ -51,7 +57,6 @@ import org.deidentifier.arx.examples.Example36;
 import org.deidentifier.arx.examples.Example37;
 import org.deidentifier.arx.examples.Example38;
 import org.deidentifier.arx.examples.Example39;
-import org.deidentifier.arx.examples.Example4;
 import org.deidentifier.arx.examples.Example40;
 import org.deidentifier.arx.examples.Example41;
 import org.deidentifier.arx.examples.Example42;
@@ -62,7 +67,6 @@ import org.deidentifier.arx.examples.Example46;
 import org.deidentifier.arx.examples.Example47;
 import org.deidentifier.arx.examples.Example48;
 import org.deidentifier.arx.examples.Example49;
-import org.deidentifier.arx.examples.Example5;
 import org.deidentifier.arx.examples.Example50;
 import org.deidentifier.arx.examples.Example51;
 import org.deidentifier.arx.examples.Example52;
@@ -71,10 +75,6 @@ import org.deidentifier.arx.examples.Example54;
 import org.deidentifier.arx.examples.Example55;
 import org.deidentifier.arx.examples.Example56;
 import org.deidentifier.arx.examples.Example57;
-import org.deidentifier.arx.examples.Example6;
-import org.deidentifier.arx.examples.Example7;
-import org.deidentifier.arx.examples.Example8;
-import org.deidentifier.arx.examples.Example9;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -92,7 +92,7 @@ public class TestExamples {
     @Test
     public void testExample1() {
         try {
-            Example1.main(null);
+            Example01.main(null);
         } catch (final Exception e) {
             e.printStackTrace();
             Assert.fail();
@@ -224,7 +224,7 @@ public class TestExamples {
     @Test
     public void testExample2() throws IOException {
         try {
-            Example2.main(null);
+            Example02.main(null);
         } catch (final Exception e) {
             e.printStackTrace();
             Assert.fail();
@@ -367,7 +367,7 @@ public class TestExamples {
     @Test
     public void testExample3() {
         try {
-            Example3.main(null);
+            Example03.main(null);
         } catch (final Exception e) {
             e.printStackTrace();
             Assert.fail();
@@ -510,7 +510,7 @@ public class TestExamples {
     @Test
     public void testExample4() {
         try {
-            Example4.main(null);
+            Example04.main(null);
         } catch (final Exception e) {
             e.printStackTrace();
             Assert.fail();
@@ -757,7 +757,7 @@ public class TestExamples {
     @Test
     public void testExample5() {
         try {
-            Example5.main(null);
+            Example05.main(null);
         } catch (final Exception e) {
             e.printStackTrace();
             Assert.fail();
@@ -770,7 +770,7 @@ public class TestExamples {
     @Test
     public void testExample6() {
         try {
-            Example6.main(null);
+            Example06.main(null);
         } catch (final Exception e) {
             e.printStackTrace();
             Assert.fail();
@@ -783,7 +783,7 @@ public class TestExamples {
     @Test
     public void testExample7() {
         try {
-            Example7.main(null);
+            Example07.main(null);
         } catch (final Exception e) {
             e.printStackTrace();
             Assert.fail();
@@ -796,7 +796,7 @@ public class TestExamples {
     @Test
     public void testExample8() {
         try {
-            Example8.main(null);
+            Example08.main(null);
         } catch (final Exception e) {
             e.printStackTrace();
             Assert.fail();
@@ -809,7 +809,7 @@ public class TestExamples {
     @Test
     public void testExample9() {
         try {
-            Example9.main(null);
+            Example09.main(null);
         } catch (final Exception e) {
             e.printStackTrace();
             Assert.fail();

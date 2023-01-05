@@ -158,6 +158,7 @@ public class MultiClassRandomForest extends ClassificationMethod {
         // The Random Forest does not support online learning, so we have to cache data
         this.features.add(encodeFeatures(features, row, false));
         this.classes.add(encodeClass(clazz, row));
+        //Note the training happens at close()
     }
 
     /**

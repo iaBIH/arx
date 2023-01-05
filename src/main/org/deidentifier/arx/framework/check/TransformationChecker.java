@@ -119,6 +119,7 @@ public class TransformationChecker {
         
         // Initialize all operators
         int initialSize = (int) (manager.getDataGeneralized().getDataLength() * 0.01d);
+        System.out.println("getDataLength: " + initialSize);
         IntArrayDictionary dictionarySensValue;
         IntArrayDictionary dictionarySensFreq;
         if ((config.getRequirements() & ARXConfiguration.REQUIREMENT_DISTRIBUTION) != 0) {

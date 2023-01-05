@@ -16,6 +16,10 @@
  */
 package org.deidentifier.arx.aggregates.classification;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.mahout.classifier.sgd.ElasticBandPrior;
 import org.apache.mahout.classifier.sgd.L1;
 import org.apache.mahout.classifier.sgd.L2;
@@ -29,6 +33,10 @@ import org.apache.mahout.vectorizer.encoders.StaticWordValueEncoder;
 import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.aggregates.ClassificationConfigurationLogisticRegression;
 import org.deidentifier.arx.common.WrappedBoolean;
+import org.hamcrest.core.IsNull;
+
+import com.carrotsearch.hppc.IntArrayList;
+import com.google.common.collect.Iterators;
 
 /**
  * Implements a classifier
@@ -49,6 +57,11 @@ public class MultiClassLogisticRegression extends ClassificationMethod {
     /** Input handle */
     private final DataHandleInternal                            inputHandle;
 
+    /** Data */
+    private List<Vector>                                              features = new ArrayList<Vector>();
+    /** Data */
+    private IntArrayList                                        classes  = new IntArrayList();
+
     /**
      * Creates a new instance
      * @param interrupt
@@ -67,7 +80,6 @@ public class MultiClassLogisticRegression extends ClassificationMethod {
         this.config = config;
         this.specification = specification;
         this.inputHandle = inputHandle;
-        
         // Prepare classifier
         PriorFunction prior = null;
         switch (config.getPriorFunction()) {
@@ -108,11 +120,40 @@ public class MultiClassLogisticRegression extends ClassificationMethod {
     @Override
     public void close() {
         lr.close();
+//        for (int i = 0; i<this.features.size(); i++ ) {
+//          System.out.println(this.features.get(i));  
+//        }
     }
 
     @Override
-    public void train(DataHandleInternal features, DataHandleInternal clazz, int row) {
-        lr.train(encodeClass(clazz, row), encodeFeatures(features, row, false));
+    public void train(DataHandleInternal features, DataHandleInternal clazz, int row) {     
+
+        // How to distinguish between input data  and anonymized data
+           // from StatisticsClassification
+              // inputClassifier.train (inputHandle,  outputHandle, index);
+              // inputZeroR.train      (inputHandle,  outputHandle, index);
+              // outputClassifier.train(outputHandle, outputHandle, index);
+        
+        //preprocess
+        int eClazz       = encodeClass   (clazz,    row);
+        Vector eFeatures = encodeFeatures(features, row, false);
+       
+        // try offline training
+        this.features.add(eFeatures);
+        this.classes.add(eClazz);
+
+//        for (int i = 0; i<features.getNumColumns(); i++ ) {
+//            System.out.print(features.getValue(row, i) + "\t");  
+//        }
+//        System.out.println(clazz.getValue(row,7));
+//        for (int i = 0; i<features.getNumColumns(); i++ ) {
+//            System.out.print(eFeatures.get(i)+ "\t");  
+//        }
+//        System.out.println(eClazz);        
+        
+        //System.exit(1);
+        // train using the current row
+        lr.train(eClazz, eFeatures);
     }
 
     /**
@@ -122,20 +163,39 @@ public class MultiClassLogisticRegression extends ClassificationMethod {
      * @return
      */
     private int encodeClass(DataHandleInternal handle, int row) {
-        return specification.classMap.get(handle.getValue(row, specification.classIndex, true));
+        // classMap Map<String, Integer>
+        // the handle here is for the output data 
+        
+        // String inputValue = handle.getValue(row, specification.classIndex, true);
+        final int outputCol = 7;
+        String inputValue = handle.getValue(row, outputCol , true);
+        //System.out.println(" specification.classIndex: " + specification.classIndex );
+        int encClazz = 1000;
+        // it seems the output is null for non class index 
+        if ( specification.classMap.get(inputValue) != null ){
+            encClazz = specification.classMap.get(inputValue);
+            //System.out.println(" class inputValue: " + inputValue + "\t\t class output value: "+ encClazz );
+        }else {
+            //System.out.println(" class inputValue: " + inputValue +" \t\t output is null!");
+        }    
+        //System.exit(1);
+        
+        return encClazz;
     }
 
     /**
      * Encodes a feature
      * @param handle
      * @param row
-     * @param classify
+     * @param classify: is this training or classification
      * @return
      */
     private Vector encodeFeatures(DataHandleInternal handle, int row, boolean classify) {
 
         // Prepare
         DenseVector vector = new DenseVector(config.getVectorLength());
+        //System.out.println("config.getVectorLength() : " + config.getVectorLength());
+
         interceptEncoder.addToVector("1", vector);
         
         // Special case where there are no features
@@ -146,26 +206,67 @@ public class MultiClassLogisticRegression extends ClassificationMethod {
         
         // For each attribute
         int count = 0;
+        // for each feature attribute
         for (int index : specification.featureIndices) {
             
+            //System.out.println("index : " + index +"  length: " + specification.featureIndices.length);
+
             // Obtain data
             ClassificationFeatureMetadata metadata = specification.featureMetadata[count];
+            //System.out.println("Attribute: " + metadata.getName() );
+
             String value = null;
+            // if classification: use input handle
             if (classify && metadata.isNumericMicroaggregation()) {
                 value = inputHandle.getValue(row, index, true);
+                //System.out.println("value inputHandle: " + inputHandle.getValue(row, index, true) );
+
             } else {
+                // if training: use handle (could be input or anonymized data) 
                 value = handle.getValue(row, index, true);
             }
+            // TODO: how to find are we dealing with input or output?
             Double numeric = metadata.getNumericValue(value);
             if (Double.isNaN(numeric)) {    
+                // Adding 1 to the vector
                 wordEncoder.addToVector("Attribute-" + index + ":" + value, 1, vector);
+                //System.out.println("wordEncoder   value: " + "Attribute-" + index + " : " + value);
+
             } else {
+                // Adding the numeric to the vector
                 wordEncoder.addToVector("Attribute-" + index, numeric, vector);
+                //System.out.println("wordEncoder  numeric: " + "Attribute-" + index +" : "+ numeric);
             }
             count++;
+            if (count>12){
+                System.out.println("------------------------------------");
+                int k =0;
+                // how the features look like
+                //while (vector.iterator().hasNext()) {                    
+                //    System.out.println(k+ " : " + vector.iterator().next());
+                //    k++;
+                //}
+                //System.exit(1);
+            }
+            
         }
+
+    
         
         // Return
         return vector;
+    }
+    
+    /**
+     * Printout preprocessed classification data 
+     */
+    private void saveEncodedData(boolean isInput) {        
+        // it saves the pre-processed features and class to a csv file using fileName
+        String fileName;
+        if (isInput) {
+              fileName = "projectName_input_classification.csv";
+        } else {
+              fileName = "projectName_Output_classification.csv";
+        }
     }
 }

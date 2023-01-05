@@ -43,7 +43,6 @@ import org.eclipse.nebula.widgets.pagination.collections.PageListHelper;
 import org.eclipse.nebula.widgets.pagination.collections.PageResult;
 import org.eclipse.nebula.widgets.pagination.table.PageableTable;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -55,6 +54,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Table;
@@ -365,9 +365,11 @@ public class ViewAttributeWeights implements IView {
             
             // Create labels
             for (int i = 0; i < sortedAttributes.size(); i++) {
-                CLabel label = new CLabel(composites.get(i), SWT.CENTER);
+                CLabel label = new CLabel(composites.get(i), SWT.CENTER);                
                 label.setText(sortedAttributes.get(i));
+                label.setToolTipText(sortedAttributes.get(i));
                 label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+                label.setToolTipText(sortedAttributes.get(i));
             }
             
             // Create knob widgets
@@ -392,14 +394,14 @@ public class ViewAttributeWeights implements IView {
                 final Label label = new Label(composites.get(i), SWT.CENTER);
                 label.setText("0.0"); //$NON-NLS-1$
                 label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-                
+
                 final String attribute = sortedAttributes.get(i);
                 final Knob<Double> knob = knobs.get(i);
                 knob.addSelectionListener(new SelectionAdapter(){
                     public void widgetSelected(SelectionEvent arg0) {
                         
                         double value = knob.getValue();
-                        label.setText(SWTUtil.getPrettyString(value));
+                        label.setText(SWTUtil.getPrettyString(value));                       
                         label.setToolTipText(String.valueOf(value));
                         
                         try {

@@ -321,10 +321,10 @@ public class StatisticsClassification {
                              WrappedBoolean interrupt,
                              WrappedInteger progress) throws ParseException {
 
+        System.out.println("StatisticsClassification ......");
         // Init
         this.interrupt = interrupt;
         this.progress = progress;
-        
         // Number of records to consider
         this.numSamples = getNumSamples(inputHandle.getNumRows(), config);
         
@@ -376,12 +376,15 @@ public class StatisticsClassification {
             try {
                 
                 // Train with all training sets
-                boolean trained = false;
+                boolean trained = false; // is the anonymized data trained!
+                // For each fold
                 for (int trainingFold = 0; trainingFold < folds.size(); trainingFold++) {
                     if (trainingFold != evaluationFold) {                        
+                        // for each row in the current fold
                         for (int index : folds.get(trainingFold)) {
                             checkInterrupt();
                             inputClassifier.train(inputHandle, outputHandle, index);
+                            //inputClassifier.train(inputHandle, inputHandle, index);
                             inputZeroR.train(inputHandle, outputHandle, index);
                             if (outputClassifier != null && !outputHandle.isOutlier(index)) {
                                 outputClassifier.train(outputHandle, outputHandle, index);
@@ -396,7 +399,7 @@ public class StatisticsClassification {
                 inputClassifier.close();
                 inputZeroR.close();
                 if (outputClassifier != null && trained) {
-                    outputClassifier.close();
+                    //outputClassifier.close();
                 }
                 
                 // Now validate

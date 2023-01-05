@@ -140,7 +140,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
      * Proceedings on Privacy Enhancing Technologies. 2018(1):67-87.
      */
     public ILScore getScore(final Transformation<?> node, final HashGroupify groupify) {
-        
+        System.out.println("ILScore getScore SafePub 2018 ..........");
         if (k < 0) {
             throw new RuntimeException("Parameters required for differential privacy have not been initialized yet");
         }

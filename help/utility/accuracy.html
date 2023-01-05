@@ -1,0 +1,51 @@
+<div>
+    <!-- 5.8.  -->
+    <h4>Classification performance</h4>
+    <p>This view can be used to configure classification models and their parameters as well as to compare the 
+    performance of these models trained on input and anonymized output data. Please note that ARX supports 
+    a specific quality
+    model for optimizing output data towards suitability as a training set for model generation.</p>
+    
+    The classification methods are decribed in <a href="https://ieeexplore.ieee.org/document/8104179" target="_blank">[1]</a>.  
+            The related code can be found in 
+            <a href="https://github.com/arx-deidentifier/arx/blob/master/src/main/org/deidentifier/arx/aggregates/StatisticsClassification.java" target="_blank">StatisticsClassification.java</a>.  
+            
+    The records are grouped then the classification metric is defined as a sum of penalties of each group. 
+    K-Anonymity Property Table T is k-anonymous with  respect to attributes X1, ..., Xd if every unique tuple
+    (x1, ..., xd) in the (multiset) projection of T on X1, ..., Xd occurs at least k times. 
+    That is, the size of each equivalence class in T with respect to X1, ..., Xd is at least k <a href="https://pages.cs.wisc.edu/~lefevre/MultiDim.pdf" target="_blank">[2]</a>.
+    Four accuricies are calculated: 
+    <ol>
+    	<li>Basline accuracy: or zero class accuracy. a trivial
+            classifier that always returns the most frequent class
+            of the training dataset.</li>
+        <li>Origianl accuracy (or ZeroRAccuracy): the classifier accuracy using original dataset.</li>
+        <li>Accuracy: the classifier accuracy using interwoven k-fold cross-validation</li>
+        <li>Relative Accuracy:  of the classifier trained with de-identified data 
+            by normalizing its accuracy using the baseline accuracy and original accuracy.
+            (Accuracy - BaslineAccuracy) / (OriginalAccuracy - BaslineAccuracy).
+            The computation can be found 
+            <a href="https://github.com/arx-deidentifier/arx/blob/419c5a2ffe915ab3c7adbd1a979c736796c555e3/src/gui/org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsClassificationOutput.java#L87" target="_blank">ViewStatisticsClassificationOutput.java</a>.  
+                </li>
+    </ol>
+
+    <p>In the view displayed at the bottom left, feature and target variables can be selected and feature scaling functions may be specified:</p>
+    <img src="../img/ch5-utility/p0508_01_analyze_9.png" alt="Classification models" width="559" height="193" /> 
+    <p>In the view displayed at the bottom right different types of classification models can be selected and configured:</p>
+    <img src="../img/ch5-utility/p0508_02_analyze_18.png" alt="Classification models"  width="567" height="194" /> 
+    <p>ARX currently supports the following types of classification models:</p>
+       <ol>
+    	<li>Logistic regression</li>
+        <li>Random forest</li>
+        <li>Naive Bayes</li>
+    </ol>
+    <p>At the top, two different views can be selected by tabs ("Overview" and "ROC curves"). For input as
+    well as output data, these views show different results of the performance analysis. Performance measures are typically
+    expressed relative to the performance of a trivial ZeroR classifier trained on unmodified input data and the selected type of model 
+    also trained on input data. Results are obtained using k-fold cross-validation.</p>
+    <p>The tables in the view "Overview" display (relative) classification accuracies as well as sensitivity, specificity and Brier score:</p> 
+    <img src="../img/ch5-utility/p0508_03_analyze_19.png" alt="Classification accuracy"  width="567" height="427" /> 
+    <p>The plots and tables in the view "ROC Curves", display ROC curves and the Area under the ROC Curve (AUC) for selected instances of the target variable:</p>
+    <img src="../img/ch5-utility/p0508_04_analyze_20.png" alt="Classification accuracy"  width="567" height="423" /> 
+    <p>Please note that ARX uses an one-vs-all approach to calculate performance measures for multinomial classifiers.</p>
+</div>

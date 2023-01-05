@@ -115,6 +115,7 @@ public class ARXResult {
                      final long time,
                      SolutionSpace<?> solutionSpace,
                      ARXProcessStatistics statistics) {
+        System.out.println("ARXResult ....");
 
         // Set registry and definition
         ((DataHandleInput)handle).setDefinition(definition);
@@ -293,6 +294,8 @@ public class ARXResult {
      */
     public DataHandle getOutput(ARXNode node, boolean fork) {
         
+        System.out.println("ARXResult getOutput ....");
+
         // Check lock
         if (fork && bufferLockedByHandle != null) {
             throw new RuntimeException("The buffer is currently locked by another handle");
@@ -436,6 +439,7 @@ public class ARXResult {
      */
     public boolean isOptimizable(DataHandle handle) {
 
+        System.out.println("ARXResult isOptimizable ....");
         // Check, if output
         if (!(handle instanceof DataHandleOutput)) {
             return false;
@@ -587,6 +591,8 @@ public class ARXResult {
                                              double gsFactor,
                                              ARXListener listener) throws RollbackRequiredException {
         
+        System.out.println("ARXResult optimizeFast ....");
+
         // Check if null
         if (listener == null) {
             throw new NullPointerException("Listener must not be null");
@@ -781,6 +787,8 @@ public class ARXResult {
                                                   final int maxIterations,
                                                   final double adaptionFactor,
                                                   final ARXListener listener) throws RollbackRequiredException {
+        System.out.println("ARXResult optimizeIterative ....");
+
         // Check parameters
         if (gsFactor < 0d || gsFactor > 1d) {
             throw new IllegalArgumentException("Generalization/suppression factor must be in [0, 1]");
@@ -893,6 +901,8 @@ public class ARXResult {
                                                       double gsFactor,
                                                       final ARXListener listener) throws RollbackRequiredException {
         
+        
+        System.out.println("ARXResult optimizeIterativeFast ....");
         // Check parameters
         if (!Double.isNaN(gsFactor) && (gsFactor < 0d || gsFactor > 1d)) {
             throw new IllegalArgumentException("Generalization/suppression factor must be in [0, 1]");

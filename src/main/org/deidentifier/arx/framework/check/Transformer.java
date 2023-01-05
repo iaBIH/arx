@@ -234,6 +234,7 @@ public class Transformer {
      * Builds the applicators.
      */
     private void buildTransformers() {
+        System.out.println("buildTransformers can be improved by reducing files .....");
         instances[15] = new Transformer15(inputGeneralized,
                                           hierarchies,
                                           inputAnalyzed,

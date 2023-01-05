@@ -100,6 +100,7 @@ import org.deidentifier.arx.io.ImportConfigurationCSV;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
@@ -1282,7 +1283,7 @@ public class Controller implements IView {
         }
 
         // Ask for file
-        String file = main.showSaveFileDialog(main.getShell(), model.getName() + "_hierarchy_" + model.getSelectedAttribute(), "*.csv"); //$NON-NLS-1$
+        String file = main.showSaveFileDialog(main.getShell(), model.getName() +"__"+ model.getSelectedAttribute()+ "_hierarchy" , "*.csv"); //$NON-NLS-1$
         if (file == null) {
             return;
         }
@@ -1299,6 +1300,56 @@ public class Controller implements IView {
             main.showErrorDialog(main.getShell(),
                                  Resources.getMessage("Controller.50"), e); //$NON-NLS-1$
         }
+    }
+
+    /**
+     * File->Export all hierarchies.
+     */
+    public void actionMenuFileExportAllHierarchies() {
+        //System.out.println("actionMenuFileExportAllHierarchies .........");
+
+        if (model == null) {
+            main.showInfoDialog(main.getShell(),
+                                Resources.getMessage("Controller.42"), //$NON-NLS-1$
+                                Resources.getMessage("Controller.43")); //$NON-NLS-1$
+            return;
+        }
+        // Loop through attributes
+        int numAttributes =  model.getInputDefinition().getQuasiIdentifyingAttributes().size();
+        // Ask for a folder to save all files 
+        
+        DirectoryDialog dialog = new DirectoryDialog(main.getShell());
+        String folderPath = dialog.open(); 
+        System.out.println(folderPath);
+
+        for (int i=0; i< numAttributes; i++) {
+            String currentAttribute = (String) model.getInputDefinition().getQuasiIdentifyingAttributes().toArray()[i];               
+            String fileName = folderPath +"/"+  model.getName() +"__"+currentAttribute+ "_hierarchy.csv"; //$NON-NLS-1$
+
+            if (fileName == null) {
+                return;
+            }
+
+            Hierarchy hierarchy = model.getInputConfig().getHierarchy(currentAttribute);
+            
+            if (hierarchy == null || hierarchy.getHierarchy() == null || hierarchy.getHierarchy().length == 0 ||
+                hierarchy.getHierarchy()[0].length == 0) {
+                main.showInfoDialog(main.getShell(),
+                                    Resources.getMessage("Controller.91"), //$NON-NLS-1$
+                                    Resources.getMessage("Controller.92")); //$NON-NLS-1$
+                return;
+            }
+            // Save the current file 
+            try {
+                final CSVDataOutput out = new CSVDataOutput(fileName, model.getCSVSyntax());
+                out.write(hierarchy.getHierarchy());
+
+            } catch (final Exception e) {
+                main.showErrorDialog(main.getShell(),
+                                     Resources.getMessage("Controller.50"), e); //$NON-NLS-1$
+            }
+        }//for
+
     }
 
     /**
@@ -1403,6 +1454,71 @@ public class Controller implements IView {
                 update(new ModelEvent(this, ModelPart.HIERARCHY, hierarchy));
             }
         }
+    }
+
+    /**
+     * File->Import all hierarchies from a folder.
+     */
+    public void actionMenuFileImportAllHierarchies() {
+        if (model == null) {
+            main.showInfoDialog(main.getShell(),
+                                Resources.getMessage("Controller.54"), //$NON-NLS-1$
+                                Resources.getMessage("Controller.55")); //$NON-NLS-1$
+            return;
+        } else if (model.getInputConfig().getInput() == null) {
+            main.showInfoDialog(main.getShell(),
+                                Resources.getMessage("Controller.56"), //$NON-NLS-1$
+                                Resources.getMessage("Controller.57")); //$NON-NLS-1$
+            return;
+        }
+        int numAttributes =  model.getInputDefinition().getQuasiIdentifyingAttributes().size();
+
+        // Ask for a folder contains all hierarchy files         
+        DirectoryDialog dialog = new DirectoryDialog(main.getShell());
+        String folderPath = dialog.open(); 
+
+        for (int i=0; i< numAttributes; i++) {
+            String currentAttribute = (String) model.getInputDefinition().getQuasiIdentifyingAttributes().toArray()[i];
+            // find the hierarchy file
+            File folder = new File(folderPath);
+            File[] listOfFiles = folder.listFiles();
+            String fileName = null;
+            for (int j = 0; j < listOfFiles.length; j++) {
+              if ((listOfFiles[j].isFile()) && (listOfFiles[j].getName().contains("__"+currentAttribute+"_hierarchy")) ) {
+                fileName = folderPath +"/"+ listOfFiles[j].getName(); //$NON-NLS-1$
+                break;
+              } 
+            }
+            if (fileName != null) {
+                // Load hierarchy
+                final char separator  = ';';
+                final Charset charset = Charset.defaultCharset() ; //'UTF-8';
+                final Hierarchy hierarchy = actionImportHierarchy(fileName, charset, separator);
+                if (hierarchy == null || hierarchy.getHierarchy() == null) {
+                    return;
+                }
+                // Check hierarchy
+                String missingValue = model.getInputConfig().isHierarchyComplete(hierarchy, currentAttribute);
+                if (missingValue != null) {                    
+                    // Ask whether to proceed
+                    boolean proceed = actionShowQuestionDialog(currentAttribute+": " + Resources.getMessage("Controller.160"), //$NON-NLS-1$
+                                                               String.format(Resources.getMessage("Controller.161"), missingValue)); //$NON-NLS-1$                    
+                    if (!proceed) {
+                        return;
+                    }
+                }
+                
+                // Finally
+                if (hierarchy != null) {
+                    model.getInputConfig().removeHierarchyBuilder(currentAttribute);
+                    model.getInputConfig().setMaximumGeneralization(currentAttribute, null);
+                    model.getInputConfig().setMinimumGeneralization(currentAttribute, null);
+                    model.getInputConfig().setHierarchy(currentAttribute, hierarchy);
+                    update(new ModelEvent(this, ModelPart.HIERARCHY, hierarchy));
+                }
+            }
+
+            }//for
     }
 
     /**

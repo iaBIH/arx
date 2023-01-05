@@ -63,7 +63,7 @@ public class LayoutPrivacySettings implements ILayout {
                                  final Controller controller) {
 
 
-        ComponentTitledFolderButtonBar bar = new ComponentTitledFolderButtonBar("id-80"); //$NON-NLS-1$
+        ComponentTitledFolderButtonBar bar = new ComponentTitledFolderButtonBar(Resources.getMessage("DialogHelpLayout.ConfigurationCriteria")); //$NON-NLS-1$
         bar.add(Resources.getMessage("CriterionDefinitionView.80"),  //$NON-NLS-1$
                 controller.getResources().getManagedImage("add.png"), //$NON-NLS-1$
                 new Runnable() {
@@ -119,7 +119,8 @@ public class LayoutPrivacySettings implements ILayout {
         Composite composite1 = folder.createItem(Resources.getMessage("CriterionSelectionDialog.4"), null); //$NON-NLS-1$
         composite1.setLayout(SWTUtil.createGridLayout(1));
         this.criteriaView = new ViewPrivacyModels(composite1, controller, this);
-
+        
+        // Population
         Composite composite2 = folder.createItem(Resources.getMessage("CriterionSelectionDialog.5"), null); //$NON-NLS-1$
         composite2.setLayout(new FillLayout());
         new ViewPopulationModel(composite2, controller);

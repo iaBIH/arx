@@ -62,6 +62,7 @@ public abstract class SolutionSpace<T> {
     public static SolutionSpace<?> create(int[] hierarchiesMinLevels, int[] hierarchiesMaxLevels) {
 
         // Choose implementation based on virtual size
+        System.out.println("SolSpace Size: "+getSize(hierarchiesMinLevels, hierarchiesMaxLevels));
         if (getSize(hierarchiesMinLevels, hierarchiesMaxLevels).compareTo(BigInteger.valueOf(Long.MAX_VALUE)) <= 0) {
             return new SolutionSpaceLong(hierarchiesMinLevels, hierarchiesMaxLevels);
         } else {
