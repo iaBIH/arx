@@ -1,4 +1,5 @@
-//package arxExamples;
+package org.deidentifier.arx.examples.sample;
+
 
 import java.io.IOException;
 import java.util.Arrays;

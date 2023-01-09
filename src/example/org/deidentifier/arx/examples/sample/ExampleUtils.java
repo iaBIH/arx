@@ -1,3 +1,6 @@
+package org.deidentifier.arx.examples.sample;
+
+
 /*
  * ARX: Powerful Data Anonymization
  * Copyright 2012 - 2021 Fabian Prasser and contributors
