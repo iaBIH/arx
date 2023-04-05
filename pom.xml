@@ -317,7 +317,7 @@
         <dependency>
             <groupId>com.github.ralfstuckert.pdfbox-layout</groupId>
             <artifactId>pdfbox2-layout</artifactId>
-            <version>1.0.1</version>
+            <version>1.0.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>*</groupId>
@@ -348,7 +348,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.4.1</version>
+            <version>42.4.3</version>
             <exclusions>
                 <exclusion>
                     <groupId>*</groupId>
@@ -647,7 +647,7 @@
             <properties>
                 <envClassifier>osx-64</envClassifier>
             </properties>
-            <!-- <dependencies>
+            <dependencies>
                 <dependency>
                     <groupId>org.eclipse.platform</groupId>
                     <artifactId>org.eclipse.swt.cocoa.macosx.x86_64</artifactId>
@@ -659,7 +659,7 @@
                         </exclusion>
                     </exclusions>
                 </dependency>
-            </dependencies> -->
+            </dependencies>
         </profile>
         <!--NOTE: this build is specific for x86_64. Separate profiles may be required for arm64 or amd64 in the future -->
         <profile>
@@ -706,7 +706,7 @@
             <properties>
                 <envClassifier>gtk-64</envClassifier>
             </properties>
-            <!-- <dependencies>
+            <dependencies>
                 <dependency>
                     <groupId>org.eclipse.platform</groupId>
                     <artifactId>org.eclipse.swt.gtk.linux.x86_64</artifactId>
@@ -718,7 +718,7 @@
                         </exclusion>
                     </exclusions>
                 </dependency>
-            </dependencies> -->
+            </dependencies>
         </profile>
 	<profile>
             <id>core</id>
