@@ -9,6 +9,10 @@
     <!-- add extra parameter to javadoc generation to deal with errors in newer Java versions -->
     <property name="javadoc.additionalparam" value="-notimestamp -Xdoclint:none" />
 
+  <typedef resource="org/apache/poi/xssf/antlib.xml"
+             classpathref="/home/ibr/myGit/BIH/Anonymization/arx-update/lib/ant/poi/poi-ooxml-5.2.3.jar"
+             uri="antlib:org.apache.poi.xssf.ooxml"/>
+
     <!-- defines the to be included libraries -->
     <fileset id="lib.jars" dir="lib/ant">
         <or>
@@ -24,9 +28,9 @@
             <filename name="**/dom4j-1.6.1.jar" />
             <filename name="**/stax-api-1.0.1.jar" />
             <filename name="**/xmlbeans-2.3.0.jar" />
-            <filename name="**/poi-3.10-FINAL-20140208.jar" />
-            <filename name="**/poi-ooxml-3.10-FINAL-20140208.jar" />
-            <filename name="**/poi-ooxml-schemas-3.10-FINAL-20140208.jar" />
+            <filename name="**/poi-5.2.3.jar" />
+            <filename name="**/poi-ooxml-5.2.3" />
+            <filename name="**/poi-ooxml-schemas-4.1.2.jar" /> 
             <filename name="**/hppc-0.6.0.jar" />
             <filename name="**/univocity-parsers-2.8.4.jar" />
             <filename name="**/newtonraphson-0.0.1.jar" />
